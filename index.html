@@ -58,6 +58,18 @@ text-decoration:none;
 font-weight:bold;
 }
 
+/* CAMBIAR NEXT PAGE A VER MÁS */
+
+.shopify-buy__btn--next-page{
+font-size:0 !important;
+}
+
+.shopify-buy__btn--next-page::after{
+content:"VER MÁS";
+font-size:22px;
+font-weight:bold;
+}
+
 </style>
 
 <script src="https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js"></script>
@@ -66,7 +78,7 @@ font-weight:bold;
 
 <body>
 
-<h1>TENIS CATALOGO</h1>
+<h1>TENIS NATALIA</h1>
 
 <div class="menu-tallas">
 <a href="#t22">22</a>
@@ -127,7 +139,7 @@ font-weight:bold;
 <h2 id="t285">TALLA 28.5</h2>
 <div id="collection-285"></div>
 
-<a class="whatsapp" href="https://wa.me/526141315187?text=Hola%20quiero%20información%20del%20catálogo">
+<a class="whatsapp" href="https://wa.me/526141234567?text=Hola%20quiero%20información%20del%20catálogo">
 PEDIR POR WHATSAPP
 </a>
 
@@ -140,20 +152,33 @@ storefrontAccessToken:'7f3dd550a0b28421734c9aea7fa6b224'
 
 ShopifyBuy.UI.onReady(client).then(function(ui){
 
-ui.createComponent('collection',{id:'315186315401',node:document.getElementById('collection-22'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
-ui.createComponent('collection',{id:'315186348169',node:document.getElementById('collection-225'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
-ui.createComponent('collection',{id:'315186380937',node:document.getElementById('collection-23'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
-ui.createComponent('collection',{id:'315186413705',node:document.getElementById('collection-235'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
-ui.createComponent('collection',{id:'315186446473',node:document.getElementById('collection-24'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
-ui.createComponent('collection',{id:'315186479241',node:document.getElementById('collection-245'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
-ui.createComponent('collection',{id:'315186512009',node:document.getElementById('collection-25'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
-ui.createComponent('collection',{id:'315186544777',node:document.getElementById('collection-255'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
-ui.createComponent('collection',{id:'315186217097',node:document.getElementById('collection-26'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
-ui.createComponent('collection',{id:'315186577545',node:document.getElementById('collection-265'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
-ui.createComponent('collection',{id:'315186610313',node:document.getElementById('collection-27'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
-ui.createComponent('collection',{id:'315186643081',node:document.getElementById('collection-275'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
-ui.createComponent('collection',{id:'315186675849',node:document.getElementById('collection-28'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
-ui.createComponent('collection',{id:'315186708617',node:document.getElementById('collection-285'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
+function opciones(){
+return{
+product:{
+contents:{
+price:false,
+compareAt:false,
+button:false,
+options:false
+}
+}
+}
+}
+
+ui.createComponent('collection',{id:'315186315401',node:document.getElementById('collection-22'),options:opciones()});
+ui.createComponent('collection',{id:'315186348169',node:document.getElementById('collection-225'),options:opciones()});
+ui.createComponent('collection',{id:'315186380937',node:document.getElementById('collection-23'),options:opciones()});
+ui.createComponent('collection',{id:'315186413705',node:document.getElementById('collection-235'),options:opciones()});
+ui.createComponent('collection',{id:'315186446473',node:document.getElementById('collection-24'),options:opciones()});
+ui.createComponent('collection',{id:'315186479241',node:document.getElementById('collection-245'),options:opciones()});
+ui.createComponent('collection',{id:'315186512009',node:document.getElementById('collection-25'),options:opciones()});
+ui.createComponent('collection',{id:'315186544777',node:document.getElementById('collection-255'),options:opciones()});
+ui.createComponent('collection',{id:'315186217097',node:document.getElementById('collection-26'),options:opciones()});
+ui.createComponent('collection',{id:'315186577545',node:document.getElementById('collection-265'),options:opciones()});
+ui.createComponent('collection',{id:'315186610313',node:document.getElementById('collection-27'),options:opciones()});
+ui.createComponent('collection',{id:'315186643081',node:document.getElementById('collection-275'),options:opciones()});
+ui.createComponent('collection',{id:'315186675849',node:document.getElementById('collection-28'),options:opciones()});
+ui.createComponent('collection',{id:'315186708617',node:document.getElementById('collection-285'),options:opciones()});
 
 });
 
