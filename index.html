@@ -13,12 +13,49 @@ margin:0;
 padding:0;
 }
 
+h1{
+text-align:center;
+font-size:70px;
+margin-top:40px;
+}
+
 h2{
 text-align:center;
-font-size:75px;
-margin-top:70px;
-margin-bottom:40px;
-letter-spacing:3px;
+font-size:95px;
+margin-top:80px;
+margin-bottom:50px;
+letter-spacing:4px;
+font-weight:900;
+}
+
+.menu-tallas{
+text-align:center;
+margin-top:40px;
+}
+
+.menu-tallas a{
+display:inline-block;
+padding:12px 18px;
+margin:6px;
+background:black;
+color:white;
+text-decoration:none;
+font-size:22px;
+border-radius:8px;
+}
+
+.whatsapp{
+display:block;
+width:280px;
+margin:80px auto;
+padding:20px;
+background:#25D366;
+color:white;
+text-align:center;
+font-size:24px;
+border-radius:14px;
+text-decoration:none;
+font-weight:bold;
 }
 
 </style>
@@ -29,140 +66,94 @@ letter-spacing:3px;
 
 <body>
 
-<h2>TALLA 22</h2>
+<h1>TENIS NATALIA</h1>
+
+<div class="menu-tallas">
+<a href="#t22">22</a>
+<a href="#t225">22.5</a>
+<a href="#t23">23</a>
+<a href="#t235">23.5</a>
+<a href="#t24">24</a>
+<a href="#t245">24.5</a>
+<a href="#t25">25</a>
+<a href="#t255">25.5</a>
+<a href="#t26">26</a>
+<a href="#t265">26.5</a>
+<a href="#t27">27</a>
+<a href="#t275">27.5</a>
+<a href="#t28">28</a>
+<a href="#t285">28.5</a>
+</div>
+
+<h2 id="t22">TALLA 22</h2>
 <div id="collection-22"></div>
 
-<h2>TALLA 22.5</h2>
+<h2 id="t225">TALLA 22.5</h2>
 <div id="collection-225"></div>
 
-<h2>TALLA 23</h2>
+<h2 id="t23">TALLA 23</h2>
 <div id="collection-23"></div>
 
-<h2>TALLA 23.5</h2>
+<h2 id="t235">TALLA 23.5</h2>
 <div id="collection-235"></div>
 
-<h2>TALLA 24</h2>
+<h2 id="t24">TALLA 24</h2>
 <div id="collection-24"></div>
 
-<h2>TALLA 24.5</h2>
+<h2 id="t245">TALLA 24.5</h2>
 <div id="collection-245"></div>
 
-<h2>TALLA 25</h2>
+<h2 id="t25">TALLA 25</h2>
 <div id="collection-25"></div>
 
-<h2>TALLA 25.5</h2>
+<h2 id="t255">TALLA 25.5</h2>
 <div id="collection-255"></div>
 
-<h2>TALLA 26</h2>
+<h2 id="t26">TALLA 26</h2>
 <div id="collection-26"></div>
 
-<h2>TALLA 26.5</h2>
+<h2 id="t265">TALLA 26.5</h2>
 <div id="collection-265"></div>
 
-<h2>TALLA 27</h2>
+<h2 id="t27">TALLA 27</h2>
 <div id="collection-27"></div>
 
-<h2>TALLA 27.5</h2>
+<h2 id="t275">TALLA 27.5</h2>
 <div id="collection-275"></div>
 
-<h2>TALLA 28</h2>
+<h2 id="t28">TALLA 28</h2>
 <div id="collection-28"></div>
 
-<h2>TALLA 28.5</h2>
+<h2 id="t285">TALLA 28.5</h2>
 <div id="collection-285"></div>
+
+<a class="whatsapp" href="https://wa.me/526141315187?text=Hola%20quiero%20información%20del%20catálogo">
+PEDIR POR WHATSAPP
+</a>
 
 <script>
 
 var client = ShopifyBuy.buildClient({
-domain: 'cb8300-4.myshopify.com',
-storefrontAccessToken: '7f3dd550a0b28421734c9aea7fa6b224'
+domain:'cb8300-4.myshopify.com',
+storefrontAccessToken:'7f3dd550a0b28421734c9aea7fa6b224'
 });
 
-ShopifyBuy.UI.onReady(client).then(function (ui) {
+ShopifyBuy.UI.onReady(client).then(function(ui){
 
-ui.createComponent('collection',{
-id:'315186315401',
-node:document.getElementById('collection-22'),
-options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
-});
-
-ui.createComponent('collection',{
-id:'315186348169',
-node:document.getElementById('collection-225'),
-options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
-});
-
-ui.createComponent('collection',{
-id:'315186380937',
-node:document.getElementById('collection-23'),
-options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
-});
-
-ui.createComponent('collection',{
-id:'315186413705',
-node:document.getElementById('collection-235'),
-options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
-});
-
-ui.createComponent('collection',{
-id:'315186446473',
-node:document.getElementById('collection-24'),
-options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
-});
-
-ui.createComponent('collection',{
-id:'315186479241',
-node:document.getElementById('collection-245'),
-options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
-});
-
-ui.createComponent('collection',{
-id:'315186512009',
-node:document.getElementById('collection-25'),
-options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
-});
-
-ui.createComponent('collection',{
-id:'315186544777',
-node:document.getElementById('collection-255'),
-options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
-});
-
-ui.createComponent('collection',{
-id:'315186217097',
-node:document.getElementById('collection-26'),
-options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
-});
-
-ui.createComponent('collection',{
-id:'315186577545',
-node:document.getElementById('collection-265'),
-options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
-});
-
-ui.createComponent('collection',{
-id:'315186610313',
-node:document.getElementById('collection-27'),
-options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
-});
-
-ui.createComponent('collection',{
-id:'315186643081',
-node:document.getElementById('collection-275'),
-options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
-});
-
-ui.createComponent('collection',{
-id:'315186675849',
-node:document.getElementById('collection-28'),
-options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
-});
-
-ui.createComponent('collection',{
-id:'315186708617',
-node:document.getElementById('collection-285'),
-options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
-});
+ui.createComponent('collection',{id:'315186315401',node:document.getElementById('collection-22'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
+ui.createComponent('collection',{id:'315186348169',node:document.getElementById('collection-225'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
+ui.createComponent('collection',{id:'315186380937',node:document.getElementById('collection-23'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
+ui.createComponent('collection',{id:'315186413705',node:document.getElementById('collection-235'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
+ui.createComponent('collection',{id:'315186446473',node:document.getElementById('collection-24'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
+ui.createComponent('collection',{id:'315186479241',node:document.getElementById('collection-245'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
+ui.createComponent('collection',{id:'315186512009',node:document.getElementById('collection-25'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
+ui.createComponent('collection',{id:'315186544777',node:document.getElementById('collection-255'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
+ui.createComponent('collection',{id:'315186217097',node:document.getElementById('collection-26'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
+ui.createComponent('collection',{id:'315186577545',node:document.getElementById('collection-265'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
+ui.createComponent('collection',{id:'315186610313',node:document.getElementById('collection-27'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
+ui.createComponent('collection',{id:'315186643081',node:document.getElementById('collection-275'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
+ui.createComponent('collection',{id:'315186675849',node:document.getElementById('collection-28'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
+ui.createComponent('collection',{id:'315186708617',node:document.getElementById('collection-285'),options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}});
 
 });
 
