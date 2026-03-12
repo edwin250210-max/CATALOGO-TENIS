@@ -116,5 +116,56 @@
       });
     });
   }
+
+
+  <h2 style="font-family:sans-serif;margin-top:40px">TALLA 22.5</h2>
+
+<div id='collection-component-1773299646524'></div>
+<script type="text/javascript">
+(function () {
+  var scriptURL = 'https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js';
+
+  function loadScript(callback) {
+    var script = document.createElement('script');
+    script.async = true;
+    script.src = scriptURL;
+    script.onload = callback;
+    document.head.appendChild(script);
+  }
+
+  function ShopifyBuyInit() {
+    var client = ShopifyBuy.buildClient({
+      domain: 'cb8300-4.myshopify.com',
+      storefrontAccessToken: '7f3dd550a0b28421734c9aea7fa6b224',
+    });
+
+    ShopifyBuy.UI.onReady(client).then(function (ui) {
+      ui.createComponent('collection', {
+        id: '315186348169',
+        node: document.getElementById('collection-component-1773299646524'),
+
+        options: {
+          product: {
+            buttonDestination: "modal",
+            contents: {
+              price: false,
+              compareAt: false,
+              button: false,
+              options: false
+            }
+          }
+        }
+
+      });
+    });
+  }
+
+  if (window.ShopifyBuy && window.ShopifyBuy.UI) {
+    ShopifyBuyInit();
+  } else {
+    loadScript(ShopifyBuyInit);
+  }
+})();
+</script>
 })();
 </script>
