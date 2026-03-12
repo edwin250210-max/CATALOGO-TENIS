@@ -15,10 +15,10 @@ padding:0;
 
 h2{
 text-align:center;
-font-size:42px;
-margin-top:60px;
-margin-bottom:30px;
-letter-spacing:2px;
+font-size:55px;
+margin-top:70px;
+margin-bottom:40px;
+letter-spacing:3px;
 }
 
 </style>
@@ -30,12 +30,46 @@ letter-spacing:2px;
 <body>
 
 <h2>TALLA 22</h2>
-
 <div id="collection-22"></div>
 
 <h2>TALLA 22.5</h2>
-
 <div id="collection-225"></div>
+
+<h2>TALLA 23</h2>
+<div id="collection-23"></div>
+
+<h2>TALLA 23.5</h2>
+<div id="collection-235"></div>
+
+<h2>TALLA 24</h2>
+<div id="collection-24"></div>
+
+<h2>TALLA 24.5</h2>
+<div id="collection-245"></div>
+
+<h2>TALLA 25</h2>
+<div id="collection-25"></div>
+
+<h2>TALLA 25.5</h2>
+<div id="collection-255"></div>
+
+<h2>TALLA 26</h2>
+<div id="collection-26"></div>
+
+<h2>TALLA 26.5</h2>
+<div id="collection-265"></div>
+
+<h2>TALLA 27</h2>
+<div id="collection-27"></div>
+
+<h2>TALLA 27.5</h2>
+<div id="collection-275"></div>
+
+<h2>TALLA 28</h2>
+<div id="collection-28"></div>
+
+<h2>TALLA 28.5</h2>
+<div id="collection-285"></div>
 
 <script>
 
@@ -46,40 +80,88 @@ storefrontAccessToken: '7f3dd550a0b28421734c9aea7fa6b224'
 
 ShopifyBuy.UI.onReady(client).then(function (ui) {
 
-ui.createComponent('collection', {
-id: '315186315401',
-node: document.getElementById('collection-22'),
-
-options:{
-product:{
-buttonDestination:"modal",
-contents:{
-price:false,
-compareAt:false,
-button:false,
-options:false
-}
-}
-}
-
+ui.createComponent('collection',{
+id:'315186315401',
+node:document.getElementById('collection-22'),
+options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
 });
 
-ui.createComponent('collection', {
-id: '315186348169',
-node: document.getElementById('collection-225'),
+ui.createComponent('collection',{
+id:'315186348169',
+node:document.getElementById('collection-225'),
+options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
+});
 
-options:{
-product:{
-buttonDestination:"modal",
-contents:{
-price:false,
-compareAt:false,
-button:false,
-options:false
-}
-}
-}
+ui.createComponent('collection',{
+id:'315186380937',
+node:document.getElementById('collection-23'),
+options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
+});
 
+ui.createComponent('collection',{
+id:'315186413705',
+node:document.getElementById('collection-235'),
+options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
+});
+
+ui.createComponent('collection',{
+id:'315186446473',
+node:document.getElementById('collection-24'),
+options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
+});
+
+ui.createComponent('collection',{
+id:'315186479241',
+node:document.getElementById('collection-245'),
+options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
+});
+
+ui.createComponent('collection',{
+id:'315186512009',
+node:document.getElementById('collection-25'),
+options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
+});
+
+ui.createComponent('collection',{
+id:'315186544777',
+node:document.getElementById('collection-255'),
+options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
+});
+
+ui.createComponent('collection',{
+id:'315186217097',
+node:document.getElementById('collection-26'),
+options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
+});
+
+ui.createComponent('collection',{
+id:'315186577545',
+node:document.getElementById('collection-265'),
+options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
+});
+
+ui.createComponent('collection',{
+id:'315186610313',
+node:document.getElementById('collection-27'),
+options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
+});
+
+ui.createComponent('collection',{
+id:'315186643081',
+node:document.getElementById('collection-275'),
+options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
+});
+
+ui.createComponent('collection',{
+id:'315186675849',
+node:document.getElementById('collection-28'),
+options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
+});
+
+ui.createComponent('collection',{
+id:'315186708617',
+node:document.getElementById('collection-285'),
+options:{product:{contents:{price:false,compareAt:false,button:false,options:false}}}
 });
 
 });
