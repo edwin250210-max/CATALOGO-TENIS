@@ -28,8 +28,6 @@ letter-spacing:4px;
 font-weight:900;
 }
 
-/* MENU TALLAS PEGADO ARRIBA */
-
 .menu-tallas{
 text-align:center;
 padding:15px;
@@ -38,8 +36,6 @@ position:sticky;
 top:0;
 z-index:1000;
 }
-
-/* BOTONES GRANDES */
 
 .menu-tallas button{
 display:inline-block;
@@ -65,15 +61,40 @@ background:white;
 border-radius:10px;
 overflow:hidden;
 box-shadow:0 3px 10px rgba(0,0,0,0.15);
-cursor:pointer;
+position:relative;
 }
 
 .product img{
 width:100%;
 display:block;
+cursor:pointer;
 }
 
-/* VISOR DE IMAGEN */
+/* BOTON SELECCION */
+
+.select-btn{
+position:absolute;
+top:8px;
+right:8px;
+width:28px;
+height:28px;
+border-radius:50%;
+background:white;
+border:2px solid #ccc;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:18px;
+cursor:pointer;
+}
+
+.selected{
+background:#007bff;
+color:white;
+border-color:#007bff;
+}
+
+/* VISOR FOTO */
 
 .viewer{
 position:fixed;
@@ -91,6 +112,23 @@ z-index:999;
 .viewer img{
 max-width:90%;
 max-height:90%;
+}
+
+/* BOTON COMPARTIR */
+
+.share-bar{
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+background:black;
+color:white;
+padding:15px 30px;
+border-radius:30px;
+font-size:20px;
+display:none;
+cursor:pointer;
+z-index:1000;
 }
 
 </style>
@@ -127,15 +165,23 @@ max-height:90%;
 <img id="imagenGrande">
 </div>
 
+<div class="share-bar" id="shareBar" onclick="compartir()">
+Compartir (0)
+</div>
+
 <script>
 
 const domain="cb8300-4.myshopify.com";
 const token="7f3dd550a0b28421734c9aea7fa6b224";
 
+let seleccionados=[];
+
 async function cargar(collectionId,talla){
 
 document.getElementById("titulo").innerText="TALLA "+talla;
 document.getElementById("productos").innerHTML="Cargando...";
+seleccionados=[];
+actualizarBarra();
 
 let productos=[];
 let cursor=null;
@@ -196,14 +242,74 @@ productos.forEach(p=>{
 let img=p.images.edges[0]?.node.url || "";
 
 html+=`
-<div class="product" onclick="abrir('${img}')">
-<img src="${img}">
+<div class="product">
+<img src="${img}" onclick="abrir('${img}')">
+<div class="select-btn" onclick="toggleSeleccion(event,'${img}',this)">✓</div>
 </div>
 `;
 
 });
 
 document.getElementById("productos").innerHTML=html;
+
+}
+
+function toggleSeleccion(e,img,btn){
+
+e.stopPropagation();
+
+if(seleccionados.includes(img)){
+seleccionados=seleccionados.filter(i=>i!==img);
+btn.classList.remove("selected");
+}else{
+
+if(seleccionados.length>=20){
+alert("Máximo 20 tenis");
+return;
+}
+
+seleccionados.push(img);
+btn.classList.add("selected");
+
+}
+
+actualizarBarra();
+
+}
+
+function actualizarBarra(){
+
+let bar=document.getElementById("shareBar");
+
+if(seleccionados.length>0){
+bar.style.display="block";
+bar.innerText="Compartir ("+seleccionados.length+")";
+}else{
+bar.style.display="none";
+}
+
+}
+
+async function compartir(){
+
+if(navigator.canShare){
+
+let files=[];
+
+for(let url of seleccionados){
+
+let res=await fetch(url);
+let blob=await res.blob();
+files.push(new File([blob],"tenis.jpg",{type:blob.type}));
+
+}
+
+navigator.share({
+files:files,
+title:"Tenis"
+});
+
+}
 
 }
 
