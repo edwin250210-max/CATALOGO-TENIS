@@ -44,21 +44,25 @@ font-size:22px;
 border-radius:8px;
 }
 
-/* BOTON VER MAS */
-
-.shopify-buy__btn--next-page{
-font-size:0 !important;
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+gap:20px;
+padding:20px;
 }
 
-.shopify-buy__btn--next-page:after{
-content:"VER MÁS";
-font-size:22px;
-font-weight:bold;
+.product{
+background:white;
+border-radius:10px;
+overflow:hidden;
+box-shadow:0 3px 10px rgba(0,0,0,0.15);
+}
+
+.product img{
+width:100%;
 }
 
 </style>
-
-<script src="https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js"></script>
 
 </head>
 
@@ -84,85 +88,139 @@ font-weight:bold;
 </div>
 
 <h2 id="t22">TALLA 22</h2>
-<div id="collection-22"></div>
+<div class="grid" id="collection-22"></div>
 
 <h2 id="t225">TALLA 22.5</h2>
-<div id="collection-225"></div>
+<div class="grid" id="collection-225"></div>
 
 <h2 id="t23">TALLA 23</h2>
-<div id="collection-23"></div>
+<div class="grid" id="collection-23"></div>
 
 <h2 id="t235">TALLA 23.5</h2>
-<div id="collection-235"></div>
+<div class="grid" id="collection-235"></div>
 
 <h2 id="t24">TALLA 24</h2>
-<div id="collection-24"></div>
+<div class="grid" id="collection-24"></div>
 
 <h2 id="t245">TALLA 24.5</h2>
-<div id="collection-245"></div>
+<div class="grid" id="collection-245"></div>
 
 <h2 id="t25">TALLA 25</h2>
-<div id="collection-25"></div>
+<div class="grid" id="collection-25"></div>
 
 <h2 id="t255">TALLA 25.5</h2>
-<div id="collection-255"></div>
+<div class="grid" id="collection-255"></div>
 
 <h2 id="t26">TALLA 26</h2>
-<div id="collection-26"></div>
+<div class="grid" id="collection-26"></div>
 
 <h2 id="t265">TALLA 26.5</h2>
-<div id="collection-265"></div>
+<div class="grid" id="collection-265"></div>
 
 <h2 id="t27">TALLA 27</h2>
-<div id="collection-27"></div>
+<div class="grid" id="collection-27"></div>
 
 <h2 id="t275">TALLA 27.5</h2>
-<div id="collection-275"></div>
+<div class="grid" id="collection-275"></div>
 
 <h2 id="t28">TALLA 28</h2>
-<div id="collection-28"></div>
+<div class="grid" id="collection-28"></div>
 
 <h2 id="t285">TALLA 28.5</h2>
-<div id="collection-285"></div>
+<div class="grid" id="collection-285"></div>
 
 <script>
 
-var client = ShopifyBuy.buildClient({
-domain:'cb8300-4.myshopify.com',
-storefrontAccessToken:'7f3dd550a0b28421734c9aea7fa6b224'
+const domain = "cb8300-4.myshopify.com";
+const token = "7f3dd550a0b28421734c9aea7fa6b224";
+
+async function cargarColeccion(collectionId, contenedor){
+
+let productos = [];
+let cursor = null;
+let hasNextPage = true;
+
+while(hasNextPage){
+
+let query = `
+{
+collection(id:"gid://shopify/Collection/${collectionId}") {
+products(first:250 ${cursor ? ', after:"'+cursor+'"' : ''}) {
+edges{
+cursor
+node{
+title
+images(first:1){
+edges{
+node{
+url
+}
+}
+}
+}
+}
+pageInfo{
+hasNextPage
+}
+}
+}
+}
+`;
+
+let res = await fetch(`https://${domain}/api/2023-10/graphql.json`,{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"X-Shopify-Storefront-Access-Token":token
+},
+body:JSON.stringify({query})
 });
 
-ShopifyBuy.UI.onReady(client).then(function(ui){
+let data = await res.json();
 
-function opciones(){
-return{
-product:{
-contents:{
-price:false,
-compareAt:false,
-button:false,
-options:false
-}
-}
-}
+let edges = data.data.collection.products.edges;
+
+edges.forEach(p=>{
+productos.push(p.node);
+cursor = p.cursor;
+});
+
+hasNextPage = data.data.collection.products.pageInfo.hasNextPage;
+
 }
 
-ui.createComponent('collection',{id:'315186315401',node:document.getElementById('collection-22'),options:opciones()});
-ui.createComponent('collection',{id:'315186348169',node:document.getElementById('collection-225'),options:opciones()});
-ui.createComponent('collection',{id:'315186380937',node:document.getElementById('collection-23'),options:opciones()});
-ui.createComponent('collection',{id:'315186413705',node:document.getElementById('collection-235'),options:opciones()});
-ui.createComponent('collection',{id:'315186446473',node:document.getElementById('collection-24'),options:opciones()});
-ui.createComponent('collection',{id:'315186479241',node:document.getElementById('collection-245'),options:opciones()});
-ui.createComponent('collection',{id:'315186512009',node:document.getElementById('collection-25'),options:opciones()});
-ui.createComponent('collection',{id:'315186544777',node:document.getElementById('collection-255'),options:opciones()});
-ui.createComponent('collection',{id:'315186217097',node:document.getElementById('collection-26'),options:opciones()});
-ui.createComponent('collection',{id:'315186577545',node:document.getElementById('collection-265'),options:opciones()});
-ui.createComponent('collection',{id:'315186610313',node:document.getElementById('collection-27'),options:opciones()});
-ui.createComponent('collection',{id:'315186643081',node:document.getElementById('collection-275'),options:opciones()});
-ui.createComponent('collection',{id:'315186675849',node:document.getElementById('collection-28'),options:opciones()});
-ui.createComponent('collection',{id:'315186708617',node:document.getElementById('collection-285'),options:opciones()});
+let html = "";
+
+productos.forEach(p=>{
+
+let img = p.images.edges[0]?.node.url || "";
+
+html += `
+<div class="product">
+<img src="${img}">
+</div>
+`;
 
 });
+
+document.getElementById(contenedor).innerHTML = html;
+
+}
+
+cargarColeccion("315186315401","collection-22");
+cargarColeccion("315186348169","collection-225");
+cargarColeccion("315186380937","collection-23");
+cargarColeccion("315186413705","collection-235");
+cargarColeccion("315186446473","collection-24");
+cargarColeccion("315186479241","collection-245");
+cargarColeccion("315186512009","collection-25");
+cargarColeccion("315186544777","collection-255");
+cargarColeccion("315186217097","collection-26");
+cargarColeccion("315186577545","collection-265");
+cargarColeccion("315186610313","collection-27");
+cargarColeccion("315186643081","collection-275");
+cargarColeccion("315186675849","collection-28");
+cargarColeccion("315186708617","collection-285");
 
 </script>
 
