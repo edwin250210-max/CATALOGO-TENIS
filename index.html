@@ -15,39 +15,40 @@ padding:0;
 
 h1{
 text-align:center;
-font-size:70px;
-margin-top:40px;
+font-size:60px;
+margin-top:30px;
 }
 
 h2{
 text-align:center;
-font-size:95px;
-margin-top:80px;
-margin-bottom:50px;
+font-size:70px;
+margin-top:20px;
+margin-bottom:20px;
 letter-spacing:4px;
 font-weight:900;
 }
 
 .menu-tallas{
 text-align:center;
-margin-top:40px;
+margin:20px;
 }
 
-.menu-tallas a{
+.menu-tallas button{
 display:inline-block;
 padding:12px 18px;
 margin:6px;
 background:black;
 color:white;
-text-decoration:none;
-font-size:22px;
+border:none;
+font-size:20px;
 border-radius:8px;
+cursor:pointer;
 }
 
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
-gap:20px;
+grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+gap:15px;
 padding:20px;
 }
 
@@ -56,14 +57,33 @@ background:white;
 border-radius:10px;
 overflow:hidden;
 box-shadow:0 3px 10px rgba(0,0,0,0.15);
+cursor:pointer;
 }
 
 .product img{
 width:100%;
+display:block;
+}
+
+.viewer{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.95);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:999;
+}
+
+.viewer img{
+max-width:90%;
+max-height:90%;
 }
 
 </style>
-
 </head>
 
 <body>
@@ -71,85 +91,55 @@ width:100%;
 <h1>TENIS CATALOGO</h1>
 
 <div class="menu-tallas">
-<a href="#t22">22</a>
-<a href="#t225">22.5</a>
-<a href="#t23">23</a>
-<a href="#t235">23.5</a>
-<a href="#t24">24</a>
-<a href="#t245">24.5</a>
-<a href="#t25">25</a>
-<a href="#t255">25.5</a>
-<a href="#t26">26</a>
-<a href="#t265">26.5</a>
-<a href="#t27">27</a>
-<a href="#t275">27.5</a>
-<a href="#t28">28</a>
-<a href="#t285">28.5</a>
+
+<button onclick="cargar('315186315401','22')">22</button>
+<button onclick="cargar('315186348169','22.5')">22.5</button>
+<button onclick="cargar('315186380937','23')">23</button>
+<button onclick="cargar('315186413705','23.5')">23.5</button>
+<button onclick="cargar('315186446473','24')">24</button>
+<button onclick="cargar('315186479241','24.5')">24.5</button>
+<button onclick="cargar('315186512009','25')">25</button>
+<button onclick="cargar('315186544777','25.5')">25.5</button>
+<button onclick="cargar('315186217097','26')">26</button>
+<button onclick="cargar('315186577545','26.5')">26.5</button>
+<button onclick="cargar('315186610313','27')">27</button>
+<button onclick="cargar('315186643081','27.5')">27.5</button>
+<button onclick="cargar('315186675849','28')">28</button>
+<button onclick="cargar('315186708617','28.5')">28.5</button>
+
 </div>
 
-<h2 id="t22">TALLA 22</h2>
-<div class="grid" id="collection-22"></div>
+<h2 id="titulo">TALLA 22</h2>
 
-<h2 id="t225">TALLA 22.5</h2>
-<div class="grid" id="collection-225"></div>
+<div class="grid" id="productos"></div>
 
-<h2 id="t23">TALLA 23</h2>
-<div class="grid" id="collection-23"></div>
-
-<h2 id="t235">TALLA 23.5</h2>
-<div class="grid" id="collection-235"></div>
-
-<h2 id="t24">TALLA 24</h2>
-<div class="grid" id="collection-24"></div>
-
-<h2 id="t245">TALLA 24.5</h2>
-<div class="grid" id="collection-245"></div>
-
-<h2 id="t25">TALLA 25</h2>
-<div class="grid" id="collection-25"></div>
-
-<h2 id="t255">TALLA 25.5</h2>
-<div class="grid" id="collection-255"></div>
-
-<h2 id="t26">TALLA 26</h2>
-<div class="grid" id="collection-26"></div>
-
-<h2 id="t265">TALLA 26.5</h2>
-<div class="grid" id="collection-265"></div>
-
-<h2 id="t27">TALLA 27</h2>
-<div class="grid" id="collection-27"></div>
-
-<h2 id="t275">TALLA 27.5</h2>
-<div class="grid" id="collection-275"></div>
-
-<h2 id="t28">TALLA 28</h2>
-<div class="grid" id="collection-28"></div>
-
-<h2 id="t285">TALLA 28.5</h2>
-<div class="grid" id="collection-285"></div>
+<div class="viewer" id="viewer" onclick="cerrar()">
+<img id="imagenGrande">
+</div>
 
 <script>
 
-const domain = "cb8300-4.myshopify.com";
-const token = "7f3dd550a0b28421734c9aea7fa6b224";
+const domain="cb8300-4.myshopify.com";
+const token="7f3dd550a0b28421734c9aea7fa6b224";
 
-async function cargarColeccion(collectionId, contenedor){
+async function cargar(collectionId,talla){
 
-let productos = [];
-let cursor = null;
-let hasNextPage = true;
+document.getElementById("titulo").innerText="TALLA "+talla;
+document.getElementById("productos").innerHTML="Cargando...";
+
+let productos=[];
+let cursor=null;
+let hasNextPage=true;
 
 while(hasNextPage){
 
-let query = `
+let query=`
 {
 collection(id:"gid://shopify/Collection/${collectionId}") {
 products(first:250 ${cursor ? ', after:"'+cursor+'"' : ''}) {
 edges{
 cursor
 node{
-title
 images(first:1){
 edges{
 node{
@@ -167,7 +157,7 @@ hasNextPage
 }
 `;
 
-let res = await fetch(`https://${domain}/api/2023-10/graphql.json`,{
+let res=await fetch(`https://${domain}/api/2023-10/graphql.json`,{
 method:"POST",
 headers:{
 "Content-Type":"application/json",
@@ -176,51 +166,47 @@ headers:{
 body:JSON.stringify({query})
 });
 
-let data = await res.json();
+let data=await res.json();
 
-let edges = data.data.collection.products.edges;
+let edges=data.data.collection.products.edges;
 
 edges.forEach(p=>{
 productos.push(p.node);
-cursor = p.cursor;
+cursor=p.cursor;
 });
 
-hasNextPage = data.data.collection.products.pageInfo.hasNextPage;
+hasNextPage=data.data.collection.products.pageInfo.hasNextPage;
 
 }
 
-let html = "";
+let html="";
 
 productos.forEach(p=>{
 
-let img = p.images.edges[0]?.node.url || "";
+let img=p.images.edges[0]?.node.url || "";
 
-html += `
-<div class="product">
+html+=`
+<div class="product" onclick="abrir('${img}')">
 <img src="${img}">
 </div>
 `;
 
 });
 
-document.getElementById(contenedor).innerHTML = html;
+document.getElementById("productos").innerHTML=html;
 
 }
 
-cargarColeccion("315186315401","collection-22");
-cargarColeccion("315186348169","collection-225");
-cargarColeccion("315186380937","collection-23");
-cargarColeccion("315186413705","collection-235");
-cargarColeccion("315186446473","collection-24");
-cargarColeccion("315186479241","collection-245");
-cargarColeccion("315186512009","collection-25");
-cargarColeccion("315186544777","collection-255");
-cargarColeccion("315186217097","collection-26");
-cargarColeccion("315186577545","collection-265");
-cargarColeccion("315186610313","collection-27");
-cargarColeccion("315186643081","collection-275");
-cargarColeccion("315186675849","collection-28");
-cargarColeccion("315186708617","collection-285");
+function abrir(img){
+document.getElementById("viewer").style.display="flex";
+document.getElementById("imagenGrande").src=img;
+}
+
+function cerrar(){
+document.getElementById("viewer").style.display="none";
+}
+
+cargar("315186315401","22");
 
 </script>
 
