@@ -79,7 +79,7 @@ object-fit:cover;
 display:block;
 }
 
-/* 🔥 VIEWER MEJORADO */
+/* 🔥 VIEWER */
 .viewer{
 position:fixed;
 top:0;
@@ -98,6 +98,28 @@ max-width:95%;
 max-height:95%;
 object-fit:contain;
 border-radius:12px;
+}
+
+/* 🔥 FLECHA SCROLL */
+.scroll-indicator{
+position:fixed;
+bottom:90px;
+left:50%;
+transform:translateX(-50%);
+font-size:22px;
+font-weight:bold;
+color:#000;
+opacity:0.7;
+animation:flotar 1.5s infinite;
+z-index:1000;
+pointer-events:none;
+text-align:center;
+}
+
+@keyframes flotar{
+0%{ transform:translate(-50%,0); opacity:0.6; }
+50%{ transform:translate(-50%,10px); opacity:1; }
+100%{ transform:translate(-50%,0); opacity:0.6; }
 }
 
 #sentinel{
@@ -136,6 +158,11 @@ height:120px;
 
 <div id="sentinel"></div>
 
+<!-- 🔥 FLECHA -->
+<div class="scroll-indicator" id="flecha">
+↓ Desliza
+</div>
+
 <div class="viewer" id="viewer" onclick="cerrar()">
 <img id="imagenGrande">
 </div>
@@ -165,6 +192,9 @@ document.getElementById("productos").innerHTML="";
 
 if(observer) observer.disconnect();
 
+// mostrar flecha al inicio
+document.getElementById("flecha").style.display = "block";
+
 await cargarMas();
 activarScroll();
 }
@@ -182,6 +212,11 @@ rootMargin:"300px"
 observer.observe(document.getElementById("sentinel"));
 
 window.addEventListener("scroll", () => {
+
+// ocultar flecha al bajar
+if(window.scrollY > 150){
+document.getElementById("flecha").style.display = "none";
+}
 
 if(cargando) return;
 
@@ -202,6 +237,7 @@ async function cargarMas(){
 if(cargando) return;
 if(totalCargados >= LIMITE){
 if(observer) observer.disconnect();
+document.getElementById("flecha").style.display = "none";
 return;
 }
 
@@ -249,10 +285,7 @@ edges.forEach(p=>{
 
 let base = p.node.images.edges[0]?.node.url || "";
 
-// 🔥 IMAGEN CHICA (rápida)
 let imgSmall = base ? base + "&width=400" : "";
-
-// 🔥 IMAGEN GRANDE (viewer)
 let imgBig = base ? base + "&width=1200" : "";
 
 let div = document.createElement("div");
@@ -264,7 +297,6 @@ div.onclick = () => abrir(imgBig);
 
 contenedor.appendChild(div);
 
-// animación suave
 requestAnimationFrame(()=>{
 div.classList.remove("oculto");
 });
@@ -276,9 +308,12 @@ totalCargados++;
 
 cargando = false;
 
+// si ya no hay más productos, ocultar flecha
 if(!data.data.collection.products.pageInfo.hasNextPage){
+document.getElementById("flecha").style.display = "none";
 if(observer) observer.disconnect();
 }
+
 }
 
 function abrir(img){
