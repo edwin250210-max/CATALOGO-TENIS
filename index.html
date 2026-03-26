@@ -62,16 +62,14 @@ border-radius:10px;
 overflow:hidden;
 box-shadow:0 3px 10px rgba(0,0,0,0.15);
 cursor:pointer;
-
-/* animación suave */
 opacity:1;
 transform:translateY(0);
-transition:all 0.4s ease;
+transition:all 0.3s ease;
 }
 
 .product.oculto{
 opacity:0;
-transform:translateY(20px);
+transform:translateY(15px);
 }
 
 .product img{
@@ -79,9 +77,9 @@ width:100%;
 height:200px;
 object-fit:cover;
 display:block;
-will-change:transform;
 }
 
+/* 🔥 VIEWER MEJORADO */
 .viewer{
 position:fixed;
 top:0;
@@ -96,8 +94,10 @@ z-index:999;
 }
 
 .viewer img{
-max-width:90%;
-max-height:90%;
+max-width:95%;
+max-height:95%;
+object-fit:contain;
+border-radius:12px;
 }
 
 #sentinel{
@@ -248,21 +248,26 @@ const contenedor = document.getElementById("productos");
 edges.forEach(p=>{
 
 let base = p.node.images.edges[0]?.node.url || "";
-let img = base ? base + "&width=400" : "";
+
+// 🔥 IMAGEN CHICA (rápida)
+let imgSmall = base ? base + "&width=400" : "";
+
+// 🔥 IMAGEN GRANDE (viewer)
+let imgBig = base ? base + "&width=1200" : "";
 
 let div = document.createElement("div");
 div.className = "product oculto";
 
-div.innerHTML = `<img src="${img}" loading="lazy">`;
+div.innerHTML = `<img src="${imgSmall}" loading="lazy">`;
 
-div.onclick = () => abrir(img);
+div.onclick = () => abrir(imgBig);
 
 contenedor.appendChild(div);
 
 // animación suave
-setTimeout(() => {
+requestAnimationFrame(()=>{
 div.classList.remove("oculto");
-}, 50);
+});
 
 cursorGlobal = p.cursor;
 totalCargados++;
