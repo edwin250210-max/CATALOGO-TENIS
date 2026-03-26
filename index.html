@@ -66,6 +66,8 @@ cursor:pointer;
 
 .product img{
 width:100%;
+height:200px;
+object-fit:cover;
 display:block;
 }
 
@@ -117,7 +119,6 @@ max-height:90%;
 
 <div class="grid" id="productos"></div>
 
-<!-- detector de scroll -->
 <div id="sentinel"></div>
 
 <div class="viewer" id="viewer" onclick="cerrar()">
@@ -134,10 +135,14 @@ let cargando = false;
 let collectionGlobal = null;
 let observer;
 
+let totalCargados = 0;
+const LIMITE = 60; // evita crasheo
+
 async function cargar(collectionId, talla){
 
 collectionGlobal = collectionId;
 cursorGlobal = null;
+totalCargados = 0;
 
 document.getElementById("titulo").innerText="TALLA "+talla;
 document.getElementById("productos").innerHTML="";
@@ -146,13 +151,12 @@ if(observer) observer.disconnect();
 
 await cargarMas();
 
-// volver a activar observer
 observer = new IntersectionObserver((entries) => {
-if(entries[0].isIntersecting){
+if(entries[0].isIntersecting && !cargando){
 cargarMas();
 }
 },{
-rootMargin:"200px"
+rootMargin:"300px"
 });
 
 observer.observe(document.getElementById("sentinel"));
@@ -161,12 +165,17 @@ observer.observe(document.getElementById("sentinel"));
 async function cargarMas(){
 
 if(cargando) return;
+if(totalCargados >= LIMITE){
+observer.disconnect();
+return;
+}
+
 cargando = true;
 
 let query=`
 {
 collection(id:"gid://shopify/Collection/${collectionGlobal}") {
-products(first:12 ${cursorGlobal ? ', after:"'+cursorGlobal+'"' : ''}) {
+products(first:6 ${cursorGlobal ? ', after:"'+cursorGlobal+'"' : ''}) {
 edges{
 cursor
 node{
@@ -203,7 +212,8 @@ let html="";
 
 edges.forEach(p=>{
 
-let img=p.node.images.edges[0]?.node.url || "";
+let base = p.node.images.edges[0]?.node.url || "";
+let img = base ? base + "&width=400" : "";
 
 html+=`
 <div class="product" onclick="abrir('${img}')">
@@ -212,6 +222,7 @@ html+=`
 `;
 
 cursorGlobal = p.cursor;
+totalCargados++;
 
 });
 
