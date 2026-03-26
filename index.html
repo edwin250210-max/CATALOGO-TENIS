@@ -89,7 +89,6 @@ max-width:90%;
 max-height:90%;
 }
 
-/* 👇 IMPORTANTE PARA QUE FUNCIONE EL SCROLL */
 #sentinel{
 height:120px;
 }
@@ -138,10 +137,11 @@ const token="7f3dd550a0b28421734c9aea7fa6b224";
 let cursorGlobal = null;
 let cargando = false;
 let collectionGlobal = null;
-let observer;
 
 let totalCargados = 0;
-const LIMITE = 100; // puedes subirlo si quieres
+const LIMITE = 100;
+
+let observer;
 
 async function cargar(collectionId, talla){
 
@@ -155,29 +155,44 @@ document.getElementById("productos").innerHTML="";
 if(observer) observer.disconnect();
 
 await cargarMas();
+activarScroll();
+}
 
+function activarScroll(){
+
+// 🔥 OBSERVER
 observer = new IntersectionObserver((entries) => {
 if(entries[0].isIntersecting && !cargando){
-
-observer.unobserve(document.getElementById("sentinel"));
-
-cargarMas().then(() => {
-observer.observe(document.getElementById("sentinel"));
-});
-
+cargarMas();
 }
 },{
 rootMargin:"300px"
 });
 
 observer.observe(document.getElementById("sentinel"));
+
+// 🔥 BACKUP SCROLL (ANTI FALLAS)
+window.addEventListener("scroll", () => {
+
+if(cargando) return;
+
+let scrollTop = window.scrollY;
+let windowHeight = window.innerHeight;
+let docHeight = document.body.offsetHeight;
+
+if(scrollTop + windowHeight > docHeight - 400){
+cargarMas();
+}
+
+});
+
 }
 
 async function cargarMas(){
 
 if(cargando) return;
 if(totalCargados >= LIMITE){
-observer.disconnect();
+if(observer) observer.disconnect();
 return;
 }
 
@@ -242,7 +257,7 @@ document.getElementById("productos").innerHTML += html;
 cargando = false;
 
 if(!data.data.collection.products.pageInfo.hasNextPage){
-observer.disconnect();
+if(observer) observer.disconnect();
 }
 }
 
