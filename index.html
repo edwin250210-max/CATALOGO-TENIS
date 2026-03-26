@@ -79,7 +79,7 @@ object-fit:cover;
 display:block;
 }
 
-/* 🔥 VIEWER */
+/* VIEWER */
 .viewer{
 position:fixed;
 top:0;
@@ -100,7 +100,7 @@ object-fit:contain;
 border-radius:12px;
 }
 
-/* 🔥 FLECHA TIPO IPHONE */
+/* 🔥 INDICADOR PRO */
 .scroll-indicator{
 position:fixed;
 bottom:90px;
@@ -108,14 +108,24 @@ left:50%;
 transform:translateX(-50%);
 z-index:1000;
 pointer-events:none;
+text-align:center;
 }
 
-/* CHEVRONS */
+/* TEXTO */
+.scroll-text{
+font-size:26px;
+font-weight:bold;
+color:#000;
+margin-bottom:8px;
+letter-spacing:1px;
+}
+
+/* CHEVRONS MÁS GRANDES */
 .chevron{
-width:22px;
-height:22px;
-border-right:2px solid #000;
-border-bottom:2px solid #000;
+width:28px;
+height:28px;
+border-right:3px solid #000;
+border-bottom:3px solid #000;
 transform:rotate(45deg);
 margin:-6px auto;
 animation:mover 1.6s infinite;
@@ -126,18 +136,17 @@ opacity:0;
 .chevron:nth-child(2){ animation-delay:0.2s; }
 .chevron:nth-child(3){ animation-delay:0.4s; }
 
-/* ANIMACIÓN */
 @keyframes mover{
 0%{
 opacity:0;
-transform:rotate(45deg) translateY(-10px);
+transform:rotate(45deg) translateY(-12px);
 }
 50%{
 opacity:1;
 }
 100%{
 opacity:0;
-transform:rotate(45deg) translateY(10px);
+transform:rotate(45deg) translateY(12px);
 }
 }
 
@@ -177,8 +186,9 @@ height:120px;
 
 <div id="sentinel"></div>
 
-<!-- 🔥 FLECHA NUEVA -->
+<!-- 🔥 INDICADOR NUEVO -->
 <div class="scroll-indicator" id="flecha">
+  <div class="scroll-text">Desliza</div>
   <div class="chevron"></div>
   <div class="chevron"></div>
   <div class="chevron"></div>
@@ -213,7 +223,6 @@ document.getElementById("productos").innerHTML="";
 
 if(observer) observer.disconnect();
 
-// mostrar flecha
 document.getElementById("flecha").style.display = "block";
 
 await cargarMas();
@@ -234,7 +243,6 @@ observer.observe(document.getElementById("sentinel"));
 
 window.addEventListener("scroll", () => {
 
-// ocultar flecha al bajar
 if(window.scrollY > 150){
 document.getElementById("flecha").style.display = "none";
 }
@@ -329,7 +337,6 @@ totalCargados++;
 
 cargando = false;
 
-// si ya no hay más productos, ocultar flecha
 if(!data.data.collection.products.pageInfo.hasNextPage){
 document.getElementById("flecha").style.display = "none";
 if(observer) observer.disconnect();
@@ -346,7 +353,6 @@ function cerrar(){
 document.getElementById("viewer").style.display="none";
 }
 
-// carga inicial
 cargar("315186315401","22");
 
 </script>
