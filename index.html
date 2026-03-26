@@ -28,8 +28,6 @@ letter-spacing:4px;
 font-weight:900;
 }
 
-/* MENU TALLAS PEGADO ARRIBA */
-
 .menu-tallas{
 text-align:center;
 padding:15px;
@@ -38,8 +36,6 @@ position:sticky;
 top:0;
 z-index:1000;
 }
-
-/* BOTONES GRANDES */
 
 .menu-tallas button{
 display:inline-block;
@@ -72,8 +68,6 @@ cursor:pointer;
 width:100%;
 display:block;
 }
-
-/* VISOR DE IMAGEN */
 
 .viewer{
 position:fixed;
@@ -123,6 +117,9 @@ max-height:90%;
 
 <div class="grid" id="productos"></div>
 
+<!-- detector de scroll -->
+<div id="sentinel"></div>
+
 <div class="viewer" id="viewer" onclick="cerrar()">
 <img id="imagenGrande">
 </div>
@@ -132,21 +129,44 @@ max-height:90%;
 const domain="cb8300-4.myshopify.com";
 const token="7f3dd550a0b28421734c9aea7fa6b224";
 
-async function cargar(collectionId,talla){
+let cursorGlobal = null;
+let cargando = false;
+let collectionGlobal = null;
+let observer;
+
+async function cargar(collectionId, talla){
+
+collectionGlobal = collectionId;
+cursorGlobal = null;
 
 document.getElementById("titulo").innerText="TALLA "+talla;
-document.getElementById("productos").innerHTML="Cargando...";
+document.getElementById("productos").innerHTML="";
 
-let productos=[];
-let cursor=null;
-let hasNextPage=true;
+if(observer) observer.disconnect();
 
-while(hasNextPage){
+await cargarMas();
+
+// volver a activar observer
+observer = new IntersectionObserver((entries) => {
+if(entries[0].isIntersecting){
+cargarMas();
+}
+},{
+rootMargin:"200px"
+});
+
+observer.observe(document.getElementById("sentinel"));
+}
+
+async function cargarMas(){
+
+if(cargando) return;
+cargando = true;
 
 let query=`
 {
-collection(id:"gid://shopify/Collection/${collectionId}") {
-products(first:250 ${cursor ? ', after:"'+cursor+'"' : ''}) {
+collection(id:"gid://shopify/Collection/${collectionGlobal}") {
+products(first:12 ${cursorGlobal ? ', after:"'+cursorGlobal+'"' : ''}) {
 edges{
 cursor
 node{
@@ -177,34 +197,31 @@ body:JSON.stringify({query})
 });
 
 let data=await res.json();
-
 let edges=data.data.collection.products.edges;
-
-edges.forEach(p=>{
-productos.push(p.node);
-cursor=p.cursor;
-});
-
-hasNextPage=data.data.collection.products.pageInfo.hasNextPage;
-
-}
 
 let html="";
 
-productos.forEach(p=>{
+edges.forEach(p=>{
 
-let img=p.images.edges[0]?.node.url || "";
+let img=p.node.images.edges[0]?.node.url || "";
 
 html+=`
 <div class="product" onclick="abrir('${img}')">
-<img src="${img}">
+<img src="${img}" loading="lazy">
 </div>
 `;
 
+cursorGlobal = p.cursor;
+
 });
 
-document.getElementById("productos").innerHTML=html;
+document.getElementById("productos").innerHTML += html;
 
+cargando = false;
+
+if(!data.data.collection.products.pageInfo.hasNextPage){
+observer.disconnect();
+}
 }
 
 function abrir(img){
@@ -216,6 +233,7 @@ function cerrar(){
 document.getElementById("viewer").style.display="none";
 }
 
+// carga inicial
 cargar("315186315401","22");
 
 </script>
