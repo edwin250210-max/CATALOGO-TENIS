@@ -89,6 +89,11 @@ max-width:90%;
 max-height:90%;
 }
 
+/* 👇 IMPORTANTE PARA QUE FUNCIONE EL SCROLL */
+#sentinel{
+height:120px;
+}
+
 </style>
 </head>
 
@@ -136,7 +141,7 @@ let collectionGlobal = null;
 let observer;
 
 let totalCargados = 0;
-const LIMITE = 60; // evita crasheo
+const LIMITE = 100; // puedes subirlo si quieres
 
 async function cargar(collectionId, talla){
 
@@ -153,7 +158,13 @@ await cargarMas();
 
 observer = new IntersectionObserver((entries) => {
 if(entries[0].isIntersecting && !cargando){
-cargarMas();
+
+observer.unobserve(document.getElementById("sentinel"));
+
+cargarMas().then(() => {
+observer.observe(document.getElementById("sentinel"));
+});
+
 }
 },{
 rootMargin:"300px"
