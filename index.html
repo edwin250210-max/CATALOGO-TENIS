@@ -100,26 +100,45 @@ object-fit:contain;
 border-radius:12px;
 }
 
-/* 🔥 FLECHA SCROLL */
+/* 🔥 FLECHA TIPO IPHONE */
 .scroll-indicator{
 position:fixed;
 bottom:90px;
 left:50%;
 transform:translateX(-50%);
-font-size:22px;
-font-weight:bold;
-color:#000;
-opacity:0.7;
-animation:flotar 1.5s infinite;
 z-index:1000;
 pointer-events:none;
-text-align:center;
 }
 
-@keyframes flotar{
-0%{ transform:translate(-50%,0); opacity:0.6; }
-50%{ transform:translate(-50%,10px); opacity:1; }
-100%{ transform:translate(-50%,0); opacity:0.6; }
+/* CHEVRONS */
+.chevron{
+width:22px;
+height:22px;
+border-right:2px solid #000;
+border-bottom:2px solid #000;
+transform:rotate(45deg);
+margin:-6px auto;
+animation:mover 1.6s infinite;
+opacity:0;
+}
+
+.chevron:nth-child(1){ animation-delay:0s; }
+.chevron:nth-child(2){ animation-delay:0.2s; }
+.chevron:nth-child(3){ animation-delay:0.4s; }
+
+/* ANIMACIÓN */
+@keyframes mover{
+0%{
+opacity:0;
+transform:rotate(45deg) translateY(-10px);
+}
+50%{
+opacity:1;
+}
+100%{
+opacity:0;
+transform:rotate(45deg) translateY(10px);
+}
 }
 
 #sentinel{
@@ -158,9 +177,11 @@ height:120px;
 
 <div id="sentinel"></div>
 
-<!-- 🔥 FLECHA -->
+<!-- 🔥 FLECHA NUEVA -->
 <div class="scroll-indicator" id="flecha">
-↓ Desliza
+  <div class="chevron"></div>
+  <div class="chevron"></div>
+  <div class="chevron"></div>
 </div>
 
 <div class="viewer" id="viewer" onclick="cerrar()">
@@ -192,7 +213,7 @@ document.getElementById("productos").innerHTML="";
 
 if(observer) observer.disconnect();
 
-// mostrar flecha al inicio
+// mostrar flecha
 document.getElementById("flecha").style.display = "block";
 
 await cargarMas();
