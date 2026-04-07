@@ -46,14 +46,13 @@ font-size:16px;
 border-radius:10px;
 }
 
-/* 🔥 GRID FLEX COMPATIBLE */
 .grid{
 display:flex;
 flex-wrap:wrap;
 padding:10px;
 }
 
-/* 📱 BASE (celulares viejos) */
+/* 📱 BASE */
 .product{
 width:48%;
 margin:1%;
@@ -62,14 +61,14 @@ border-radius:10px;
 overflow:hidden;
 }
 
-/* 📱 CELULARES NORMALES */
+/* 📱 MEDIO */
 @media screen and (min-width:400px){
 .product{
 width:31%;
 }
 }
 
-/* 📲 PANTALLAS GRANDES */
+/* 📲 GRANDE */
 @media screen and (min-width:500px){
 .product{
 width:23%;
@@ -82,7 +81,7 @@ height:140px;
 object-fit:cover;
 }
 
-/* 🔥 BOTÓN VER MÁS */
+/* 🔥 BOTÓN */
 .ver-mas{
 position:fixed;
 bottom:10px;
@@ -99,11 +98,6 @@ border-radius:12px;
 z-index:999;
 }
 
-.ver-mas:active{
-transform:translateX(-50%) scale(0.97);
-}
-
-/* VIEWER */
 .viewer{
 position:fixed;
 top:0;
@@ -129,7 +123,6 @@ max-height:95%;
 <h1>SELECCIONA TU TALLA</h1>
 
 <div class="menu-tallas">
-
 <button onclick="cargar('315186315401','22')">22</button>
 <button onclick="cargar('315186348169','22.5')">22.5</button>
 <button onclick="cargar('315186380937','23')">23</button>
@@ -144,7 +137,6 @@ max-height:95%;
 <button onclick="cargar('315186643081','27.5')">27.5</button>
 <button onclick="cargar('315186675849','28')">28</button>
 <button onclick="cargar('315186708617','28.5')">28.5</button>
-
 </div>
 
 <h2 id="titulo">TALLA 22</h2>
@@ -169,6 +161,32 @@ var collectionGlobal = null;
 var totalCargados = 0;
 var LIMITE = 100;
 
+/* 🔥 SCROLL SIMPLE COMPATIBLE */
+var timeoutScroll;
+
+function activarScroll(){
+
+window.onscroll = function(){
+
+if(cargando) return;
+
+clearTimeout(timeoutScroll);
+
+timeoutScroll = setTimeout(function(){
+
+var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+var windowHeight = window.innerHeight || document.documentElement.clientHeight;
+var docHeight = document.documentElement.scrollHeight;
+
+if(scrollTop + windowHeight >= docHeight - 200){
+cargarMas();
+}
+
+},200);
+
+};
+}
+
 function cargar(collectionId, talla){
 
 collectionGlobal = collectionId;
@@ -180,6 +198,7 @@ document.getElementById("productos").innerHTML="";
 document.getElementById("btnVerMas").style.display="block";
 
 cargarMas();
+activarScroll();
 }
 
 function cargarMas(){
