@@ -52,7 +52,7 @@ flex-wrap:wrap;
 padding:10px;
 }
 
-/* 📱 BASE */
+/* BASE */
 .product{
 width:48%;
 margin:1%;
@@ -61,14 +61,14 @@ border-radius:10px;
 overflow:hidden;
 }
 
-/* 📱 MEDIO */
+/* MEDIO */
 @media screen and (min-width:400px){
 .product{
 width:31%;
 }
 }
 
-/* 📲 GRANDE */
+/* GRANDE */
 @media screen and (min-width:500px){
 .product{
 width:23%;
@@ -81,7 +81,7 @@ height:140px;
 object-fit:cover;
 }
 
-/* 🔥 BOTÓN */
+/* BOTÓN */
 .ver-mas{
 position:fixed;
 bottom:10px;
@@ -161,28 +161,34 @@ var collectionGlobal = null;
 var totalCargados = 0;
 var LIMITE = 100;
 
-/* 🔥 SCROLL SIMPLE COMPATIBLE */
-var timeoutScroll;
+var ultimoScroll = 0;
 
+/* 🔥 SCROLL COMPATIBLE */
 function activarScroll(){
 
 window.onscroll = function(){
 
 if(cargando) return;
 
-clearTimeout(timeoutScroll);
-
-timeoutScroll = setTimeout(function(){
-
 var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
 var windowHeight = window.innerHeight || document.documentElement.clientHeight;
-var docHeight = document.documentElement.scrollHeight;
+
+var docHeight = Math.max(
+document.body.scrollHeight,
+document.documentElement.scrollHeight,
+document.body.offsetHeight,
+document.documentElement.offsetHeight
+);
 
 if(scrollTop + windowHeight >= docHeight - 200){
+
+if(scrollTop > ultimoScroll){
+ultimoScroll = scrollTop;
 cargarMas();
 }
 
-},200);
+}
 
 };
 }
@@ -192,6 +198,7 @@ function cargar(collectionId, talla){
 collectionGlobal = collectionId;
 cursorGlobal = null;
 totalCargados = 0;
+ultimoScroll = 0;
 
 document.getElementById("titulo").innerHTML="TALLA "+talla;
 document.getElementById("productos").innerHTML="";
