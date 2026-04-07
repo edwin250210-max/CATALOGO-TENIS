@@ -2,6 +2,8 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>TENIS NATALIA</title>
 
 <style>
@@ -15,22 +17,19 @@ padding:0;
 
 h1{
 text-align:center;
-font-size:60px;
-margin-top:30px;
+font-size:40px;
+margin-top:20px;
 }
 
 h2{
 text-align:center;
-font-size:70px;
-margin-top:20px;
-margin-bottom:20px;
-letter-spacing:4px;
-font-weight:900;
+font-size:35px;
+margin:15px;
 }
 
 .menu-tallas{
 text-align:center;
-padding:15px;
+padding:10px;
 background:#f4f4f4;
 position:sticky;
 top:0;
@@ -38,45 +37,34 @@ z-index:1000;
 }
 
 .menu-tallas button{
-display:inline-block;
-padding:20px 30px;
-margin:10px;
+padding:12px 18px;
+margin:5px;
 background:black;
 color:white;
 border:none;
-font-size:30px;
-border-radius:14px;
-cursor:pointer;
+font-size:18px;
+border-radius:10px;
 }
 
+/* FLEX en lugar de GRID */
 .grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
-gap:15px;
-padding:20px;
+display:flex;
+flex-wrap:wrap;
+padding:10px;
 }
 
 .product{
+width:48%;
+margin:1%;
 background:white;
 border-radius:10px;
 overflow:hidden;
-box-shadow:0 3px 10px rgba(0,0,0,0.15);
-cursor:pointer;
-opacity:1;
-transform:translateY(0);
-transition:all 0.3s ease;
-}
-
-.product.oculto{
-opacity:0;
-transform:translateY(15px);
 }
 
 .product img{
 width:100%;
-height:200px;
+height:180px;
 object-fit:cover;
-display:block;
 }
 
 /* VIEWER */
@@ -86,81 +74,19 @@ top:0;
 left:0;
 width:100%;
 height:100%;
-background:rgba(0,0,0,0.95);
+background:black;
 display:none;
 align-items:center;
 justify-content:center;
-z-index:999;
 }
 
 .viewer img{
 max-width:95%;
 max-height:95%;
-object-fit:contain;
-border-radius:12px;
-}
-
-/* 🔥 INDICADOR PRO */
-.scroll-indicator{
-position:fixed;
-bottom:140px; /* 🔥 MÁS ARRIBA */
-left:50%;
-transform:translateX(-50%);
-z-index:1000;
-pointer-events:none;
-text-align:center;
-animation:flotar 2s infinite;
-}
-
-/* TEXTO MEJORADO */
-.scroll-text{
-font-size:34px;
-font-weight:900;
-color:#111;
-margin-bottom:12px;
-letter-spacing:2px;
-text-shadow:0 3px 8px rgba(0,0,0,0.25);
-}
-
-/* CHEVRONS */
-.chevron{
-width:28px;
-height:28px;
-border-right:3px solid #000;
-border-bottom:3px solid #000;
-transform:rotate(45deg);
-margin:-6px auto;
-animation:mover 1.6s infinite;
-opacity:0;
-}
-
-.chevron:nth-child(1){ animation-delay:0s; }
-.chevron:nth-child(2){ animation-delay:0.2s; }
-.chevron:nth-child(3){ animation-delay:0.4s; }
-
-@keyframes mover{
-0%{
-opacity:0;
-transform:rotate(45deg) translateY(-12px);
-}
-50%{
-opacity:1;
-}
-100%{
-opacity:0;
-transform:rotate(45deg) translateY(12px);
-}
-}
-
-/* 🔥 ANIMACIÓN FLOTANTE */
-@keyframes flotar{
-0%{ transform:translate(-50%, 0); }
-50%{ transform:translate(-50%, -6px); }
-100%{ transform:translate(-50%, 0); }
 }
 
 #sentinel{
-height:120px;
+height:100px;
 }
 
 </style>
@@ -195,162 +121,112 @@ height:120px;
 
 <div id="sentinel"></div>
 
-<!-- 🔥 INDICADOR -->
-<div class="scroll-indicator" id="flecha">
-  <div class="scroll-text">Desliza para ver más</div>
-  <div class="chevron"></div>
-  <div class="chevron"></div>
-  <div class="chevron"></div>
-</div>
-
 <div class="viewer" id="viewer" onclick="cerrar()">
 <img id="imagenGrande">
 </div>
 
 <script>
 
-const domain="cb8300-4.myshopify.com";
-const token="7f3dd550a0b28421734c9aea7fa6b224";
+var domain="cb8300-4.myshopify.com";
+var token="7f3dd550a0b28421734c9aea7fa6b224";
 
-let cursorGlobal = null;
-let cargando = false;
-let collectionGlobal = null;
+var cursorGlobal = null;
+var cargando = false;
+var collectionGlobal = null;
 
-let totalCargados = 0;
-const LIMITE = 100;
+var totalCargados = 0;
+var LIMITE = 100;
 
-let observer;
-
-async function cargar(collectionId, talla){
+function cargar(collectionId, talla){
 
 collectionGlobal = collectionId;
 cursorGlobal = null;
 totalCargados = 0;
 
-document.getElementById("titulo").innerText="TALLA "+talla;
+document.getElementById("titulo").innerHTML="TALLA "+talla;
 document.getElementById("productos").innerHTML="";
 
-if(observer) observer.disconnect();
-
-document.getElementById("flecha").style.display = "block";
-
-await cargarMas();
+cargarMas();
 activarScroll();
 }
 
 function activarScroll(){
 
-observer = new IntersectionObserver((entries) => {
-if(entries[0].isIntersecting && !cargando){
-cargarMas();
-}
-},{
-rootMargin:"300px"
-});
-
-observer.observe(document.getElementById("sentinel"));
-
-window.addEventListener("scroll", () => {
-
-if(window.scrollY > 150){
-document.getElementById("flecha").style.display = "none";
-}
+window.onscroll = function(){
 
 if(cargando) return;
 
-let scrollTop = window.scrollY;
-let windowHeight = window.innerHeight;
-let docHeight = document.body.offsetHeight;
+var scrollTop = window.pageYOffset;
+var windowHeight = window.innerHeight;
+var docHeight = document.body.scrollHeight;
 
-if(scrollTop + windowHeight > docHeight - 400){
+if(scrollTop + windowHeight > docHeight - 300){
 cargarMas();
 }
 
-});
-
+};
 }
 
-async function cargarMas(){
+function cargarMas(){
 
 if(cargando) return;
-if(totalCargados >= LIMITE){
-if(observer) observer.disconnect();
-document.getElementById("flecha").style.display = "none";
-return;
-}
+if(totalCargados >= LIMITE) return;
 
 cargando = true;
 
-let query=`
-{
-collection(id:"gid://shopify/Collection/${collectionGlobal}") {
-products(first:6 ${cursorGlobal ? ', after:"'+cursorGlobal+'"' : ''}) {
-edges{
-cursor
-node{
-images(first:1){
-edges{
-node{
-url
-}
-}
-}
-}
-}
-pageInfo{
-hasNextPage
-}
-}
-}
-}
-`;
+var query = '{ collection(id:"gid://shopify/Collection/' + collectionGlobal + '") { products(first:6 ' + (cursorGlobal ? ', after:"'+cursorGlobal+'"' : '') + ') { edges{ cursor node{ images(first:1){ edges{ node{ url } } } } } pageInfo{ hasNextPage } } } }';
 
-let res=await fetch(`https://${domain}/api/2023-10/graphql.json`,{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-"X-Shopify-Storefront-Access-Token":token
-},
-body:JSON.stringify({query})
-});
+var xhr = new XMLHttpRequest();
+xhr.open("POST","https://" + domain + "/api/2023-10/graphql.json",true);
+xhr.setRequestHeader("Content-Type","application/json");
+xhr.setRequestHeader("X-Shopify-Storefront-Access-Token",token);
 
-let data=await res.json();
-let edges=data.data.collection.products.edges;
+xhr.onreadystatechange = function(){
+if(xhr.readyState === 4 && xhr.status === 200){
 
-const contenedor = document.getElementById("productos");
+var data = JSON.parse(xhr.responseText);
+procesarProductos(data);
 
-edges.forEach(p=>{
+}
+};
 
-let base = p.node.images.edges[0]?.node.url || "";
+xhr.send(JSON.stringify({query:query}));
+}
 
-let imgSmall = base ? base + "&width=400" : "";
-let imgBig = base ? base + "&width=1200" : "";
+function procesarProductos(data){
 
-let div = document.createElement("div");
-div.className = "product oculto";
+var edges = data.data.collection.products.edges;
+var contenedor = document.getElementById("productos");
 
-div.innerHTML = `<img src="${imgSmall}" loading="lazy">`;
+for(var i=0; i<edges.length; i++){
 
-div.onclick = () => abrir(imgBig);
+var p = edges[i];
+
+var base = "";
+if(p.node.images.edges.length > 0){
+base = p.node.images.edges[0].node.url;
+}
+
+var imgSmall = base ? base + "&width=400" : "";
+var imgBig = base ? base + "&width=1200" : "";
+
+var div = document.createElement("div");
+div.className = "product";
+
+div.innerHTML = '<img src="'+imgSmall+'">';
+
+div.onclick = (function(img){
+return function(){ abrir(img); }
+})(imgBig);
 
 contenedor.appendChild(div);
-
-requestAnimationFrame(()=>{
-div.classList.remove("oculto");
-});
 
 cursorGlobal = p.cursor;
 totalCargados++;
 
-});
-
-cargando = false;
-
-if(!data.data.collection.products.pageInfo.hasNextPage){
-document.getElementById("flecha").style.display = "none";
-if(observer) observer.disconnect();
 }
 
+cargando = false;
 }
 
 function abrir(img){
@@ -362,6 +238,7 @@ function cerrar(){
 document.getElementById("viewer").style.display="none";
 }
 
+/* CARGA INICIAL */
 cargar("315186315401","22");
 
 </script>
