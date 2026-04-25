@@ -52,7 +52,6 @@ flex-wrap:wrap;
 padding:10px;
 }
 
-/* BASE */
 .product{
 width:48%;
 margin:1%;
@@ -61,14 +60,12 @@ border-radius:10px;
 overflow:hidden;
 }
 
-/* MEDIO */
 @media screen and (min-width:400px){
 .product{
 width:31%;
 }
 }
 
-/* GRANDE */
 @media screen and (min-width:500px){
 .product{
 width:23%;
@@ -81,7 +78,6 @@ height:140px;
 object-fit:cover;
 }
 
-/* BOTÓN */
 .ver-mas{
 position:fixed;
 bottom:10px;
@@ -159,11 +155,10 @@ var cargando = false;
 var collectionGlobal = null;
 
 var totalCargados = 0;
-var LIMITE = 100;
+var LIMITE = 199; // 🔥 AQUÍ EL CAMBIO
 
 var ultimoScroll = 0;
 
-/* 🔥 SCROLL COMPATIBLE */
 function activarScroll(){
 
 window.onscroll = function(){
@@ -287,7 +282,6 @@ function cerrar(){
 document.getElementById("viewer").style.display="none";
 }
 
-/* INICIO */
 cargar("315186315401","22");
 
 </script>
