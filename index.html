@@ -79,8 +79,6 @@ object-fit:cover;
 display:block;
 }
 
-/* PUNTOS STOCK */
-
 .stock-dots{
 display:flex;
 justify-content:center;
@@ -176,13 +174,10 @@ var domain="cb8300-4.myshopify.com";
 var token="7f3dd550a0b28421734c9aea7fa6b224";
 
 var cursorGlobal = null;
-
 var cargando = false;
-
 var collectionGlobal = null;
 
 var totalCargados = 0;
-
 var LIMITE = 199;
 
 var ultimoScroll = 0;
@@ -268,7 +263,7 @@ var query =
 collectionGlobal +
 '") { products(first:6' +
 (cursorGlobal ? ', after:"' + cursorGlobal + '"' : '') +
-') { edges { cursor node { images(first:1){ edges{ node{ url } } } variants(first:1){ edges{ node{ quantityAvailable } } } } } pageInfo{ hasNextPage } } } }';
+') { edges { cursor node { totalInventory images(first:1){ edges{ node{ url } } } } } pageInfo{ hasNextPage } } } }';
 
 var xhr = new XMLHttpRequest();
 
@@ -356,22 +351,11 @@ div.className = "product";
 
 var puntos = "";
 
-var stockReal = 0;
-
-if(
-p.node.variants.edges.length > 0
-){
-
-stockReal =
-p.node.variants.edges[0]
-.node.quantityAvailable || 0;
-
-}
+var stockReal =
+p.node.totalInventory || 0;
 
 if(stockReal > 15){
-
 stockReal = 15;
-
 }
 
 for(var j=0; j<stockReal; j++){
