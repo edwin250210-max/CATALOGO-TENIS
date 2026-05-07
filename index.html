@@ -42,7 +42,7 @@ body{
     background:white;
     border-radius:18px;
     overflow:hidden;
-    padding-bottom:10px;
+    background:white;
 }
 
 .card img{
@@ -56,7 +56,7 @@ body{
     display:flex;
     justify-content:center;
     gap:6px;
-    margin-top:10px;
+    padding:10px;
     flex-wrap:wrap;
 }
 
@@ -129,7 +129,7 @@ const query = `
           edges{
             node{
               title
-              inventoryQuantity
+              quantityAvailable
             }
           }
         }
@@ -147,7 +147,7 @@ const response = await fetch(
         "Content-Type":"application/json",
         "X-Shopify-Storefront-Access-Token":STOREFRONT_TOKEN
     },
-    body:JSON.stringify({query})
+    body:JSON.stringify({ query })
 });
 
 const data = await response.json();
@@ -164,18 +164,18 @@ container.innerHTML = "";
 
 productosGlobal.forEach(producto=>{
 
-    const variante = producto.variants.edges.find(v=>
+    const variante = producto.variants.edges.find(v =>
         v.node.title.includes(tallaSeleccionada)
     );
 
     if(!variante) return;
 
-    const stock = variante.node.inventoryQuantity;
+    const stock = variante.node.quantityAvailable || 0;
 
     if(stock <= 0) return;
 
     const imagen =
-        producto.images.edges[0]?.node.url;
+        producto.images.edges[0]?.node.url || "";
 
     const puntosHTML = Array(stock)
         .fill('<div class="punto"></div>')
