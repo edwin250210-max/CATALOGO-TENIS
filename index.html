@@ -1,440 +1,199 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>TENIS NATALIA</title>
+<title>Catálogo</title>
 
 <style>
-
 body{
-font-family:Arial;
-background:#f4f4f4;
-margin:0;
-padding:0;
+    margin:0;
+    padding:10px;
+    background:#f3f3f3;
+    font-family:Arial;
 }
 
-h1{
-text-align:center;
-font-size:40px;
-margin-top:20px;
+.tallas{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    justify-content:center;
+    margin-bottom:20px;
 }
 
-h2{
-text-align:center;
-font-size:30px;
-margin:15px;
-}
-
-.menu-tallas{
-text-align:center;
-padding:10px;
-background:#f4f4f4;
-position:sticky;
-top:0;
-z-index:1000;
-}
-
-.menu-tallas button{
-padding:10px 15px;
-margin:5px;
-background:black;
-color:white;
-border:none;
-font-size:16px;
-border-radius:10px;
+.talla-btn{
+    background:black;
+    color:white;
+    border:none;
+    border-radius:12px;
+    padding:14px 18px;
+    font-size:18px;
+    cursor:pointer;
 }
 
 .grid{
-display:flex;
-flex-wrap:wrap;
-padding:10px;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
 }
 
-.product{
-width:48%;
-margin:1%;
-background:white;
-border-radius:10px;
-overflow:hidden;
+.card{
+    background:white;
+    border-radius:18px;
+    overflow:hidden;
+    padding-bottom:10px;
 }
 
-@media screen and (min-width:400px){
-.product{
-width:31%;
-}
-}
-
-@media screen and (min-width:500px){
-.product{
-width:23%;
-}
+.card img{
+    width:100%;
+    aspect-ratio:1/1;
+    object-fit:cover;
 }
 
-.product img{
-width:100%;
-height:140px;
-object-fit:cover;
-display:block;
+.puntos{
+    display:flex;
+    justify-content:center;
+    gap:6px;
+    margin-top:8px;
 }
 
-/* PUNTOS */
-
-.stock-dots{
-display:flex;
-justify-content:center;
-flex-wrap:wrap;
-gap:2px;
-padding:4px 0 6px;
-opacity:.45;
-min-height:10px;
+.punto{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#9b9b9b;
 }
-
-.dot{
-width:3px;
-height:3px;
-border-radius:50%;
-background:#111;
-}
-
-.ver-mas{
-position:fixed;
-bottom:10px;
-left:50%;
-transform:translateX(-50%);
-width:90%;
-padding:18px;
-font-size:22px;
-font-weight:bold;
-background:black;
-color:white;
-border:none;
-border-radius:12px;
-z-index:999;
-}
-
-.viewer{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:black;
-display:none;
-align-items:center;
-justify-content:center;
-}
-
-.viewer img{
-max-width:95%;
-max-height:95%;
-}
-
 </style>
 </head>
 
 <body>
 
-<h1>SELECCIONA TU TALLA</h1>
-
-<div class="menu-tallas">
-
-<button onclick="cargar('315186315401','22')">22</button>
-<button onclick="cargar('315186348169','22.5')">22.5</button>
-<button onclick="cargar('315186380937','23')">23</button>
-<button onclick="cargar('315186413705','23.5')">23.5</button>
-<button onclick="cargar('315186446473','24')">24</button>
-<button onclick="cargar('315186479241','24.5')">24.5</button>
-<button onclick="cargar('315186512009','25')">25</button>
-<button onclick="cargar('315186544777','25.5')">25.5</button>
-<button onclick="cargar('315186217097','26')">26</button>
-<button onclick="cargar('315186577545','26.5')">26.5</button>
-<button onclick="cargar('315186610313','27')">27</button>
-<button onclick="cargar('315186643081','27.5')">27.5</button>
-<button onclick="cargar('315186675849','28')">28</button>
-<button onclick="cargar('315186708617','28.5')">28.5</button>
-
-</div>
-
-<h2 id="titulo">TALLA 22</h2>
+<div class="tallas" id="tallas"></div>
 
 <div class="grid" id="productos"></div>
 
-<button class="ver-mas" id="btnVerMas" onclick="cargarMas()">
-VER MÁS MODELOS 🔥
-</button>
-
-<div class="viewer" id="viewer" onclick="cerrar()">
-<img id="imagenGrande">
-</div>
-
 <script>
+const SHOPIFY_DOMAIN = "TU-TIENDA.myshopify.com";
+const STOREFRONT_TOKEN = "TU_TOKEN";
 
-var domain="cb8300-4.myshopify.com";
-var token="7f3dd550a0b28421734c9aea7fa6b224";
+const tallas = [
+    "22","22.5","23","23.5",
+    "24","24.5","25","25.5",
+    "26","26.5","27","27.5",
+    "28","28.5"
+];
 
-var cursorGlobal = null;
-var cargando = false;
-var collectionGlobal = null;
+let productosGlobal = [];
 
-var totalCargados = 0;
-var LIMITE = 199;
+const tallasContainer = document.getElementById("tallas");
 
-var ultimoScroll = 0;
+tallas.forEach(talla=>{
+    const btn = document.createElement("button");
+    btn.className = "talla-btn";
+    btn.textContent = talla;
 
-function activarScroll(){
+    btn.onclick = ()=>{
+        cargarProductos(talla);
+    };
 
-window.onscroll = function(){
+    tallasContainer.appendChild(btn);
+});
 
-if(cargando) return;
+async function obtenerProductos(){
 
-var scrollTop =
-window.pageYOffset ||
-document.documentElement.scrollTop;
+    const query = `
+    {
+      products(first: 250) {
+        edges {
+          node {
+            title
 
-var windowHeight =
-window.innerHeight ||
-document.documentElement.clientHeight;
+            images(first: 10){
+              edges{
+                node{
+                  url
+                }
+              }
+            }
 
-var docHeight = Math.max(
-document.body.scrollHeight,
-document.documentElement.scrollHeight,
-document.body.offsetHeight,
-document.documentElement.offsetHeight
-);
+            variants(first: 50){
+              edges{
+                node{
+                  title
+                  inventoryQuantity
+                }
+              }
+            }
+          }
+        }
+      }
+    }`;
 
-if(scrollTop + windowHeight >= docHeight - 200){
+    const response = await fetch(
+      `https://${SHOPIFY_DOMAIN}/api/2024-01/graphql.json`,
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          "X-Shopify-Storefront-Access-Token":STOREFRONT_TOKEN
+        },
+        body:JSON.stringify({ query })
+      }
+    );
 
-if(scrollTop > ultimoScroll){
+    const data = await response.json();
 
-ultimoScroll = scrollTop;
-
-cargarMas();
-
+    productosGlobal = data.data.products.edges.map(p=>p.node);
 }
 
+function cargarProductos(tallaSeleccionada){
+
+    const container = document.getElementById("productos");
+
+    container.innerHTML = "";
+
+    productosGlobal.forEach(producto=>{
+
+        const variante = producto.variants.edges.find(v=>
+            v.node.title.includes(tallaSeleccionada)
+        );
+
+        if(!variante) return;
+
+        const stock = variante.node.inventoryQuantity;
+
+        if(stock <= 0) return;
+
+        const imagen =
+            producto.images.edges[0]?.node.url ||
+            "";
+
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const puntosHTML = Array(stock)
+            .fill('<div class="punto"></div>')
+            .join("");
+
+        card.innerHTML = `
+            <img src="${imagen}">
+            <div class="puntos">
+                ${puntosHTML}
+            </div>
+        `;
+
+        container.appendChild(card);
+    });
 }
 
-};
+(async ()=>{
 
-}
+    await obtenerProductos();
 
-function cargar(collectionId, talla){
+    cargarProductos("22");
 
-collectionGlobal = collectionId;
-
-cursorGlobal = null;
-
-totalCargados = 0;
-
-ultimoScroll = 0;
-
-document.getElementById("titulo").innerHTML =
-"TALLA " + talla;
-
-document.getElementById("productos").innerHTML = "";
-
-document.getElementById("btnVerMas").style.display =
-"block";
-
-cargarMas();
-
-activarScroll();
-
-}
-
-function cargarMas(){
-
-if(cargando) return;
-
-if(totalCargados >= LIMITE){
-
-document.getElementById("btnVerMas").style.display =
-"none";
-
-return;
-
-}
-
-cargando = true;
-
-var query =
-'{ collection(id:"gid://shopify/Collection/' +
-collectionGlobal +
-'") { products(first:6' +
-(cursorGlobal ? ', after:"' + cursorGlobal + '"' : '') +
-') { edges { cursor node { images(first:1){ edges{ node{ url } } } variants(first:1){ edges{ node{ availableForSale } } } } } pageInfo{ hasNextPage } } } }';
-
-var xhr = new XMLHttpRequest();
-
-xhr.open(
-"POST",
-"https://" + domain + "/api/2023-10/graphql.json",
-true
-);
-
-xhr.setRequestHeader(
-"Content-Type",
-"application/json"
-);
-
-xhr.setRequestHeader(
-"X-Shopify-Storefront-Access-Token",
-token
-);
-
-xhr.onreadystatechange = function(){
-
-if(xhr.readyState === 4){
-
-cargando = false;
-
-if(xhr.status === 200){
-
-var data = JSON.parse(xhr.responseText);
-
-procesarProductos(data);
-
-}
-
-}
-
-};
-
-xhr.send(JSON.stringify({
-query:query
-}));
-
-}
-
-function procesarProductos(data){
-
-if(
-!data ||
-!data.data ||
-!data.data.collection
-){
-return;
-}
-
-var edges =
-data.data.collection.products.edges;
-
-var contenedor =
-document.getElementById("productos");
-
-for(var i=0; i<edges.length; i++){
-
-var p = edges[i];
-
-var base = "";
-
-if(
-p.node.images.edges.length > 0
-){
-
-base =
-p.node.images.edges[0].node.url;
-
-}
-
-var imgSmall =
-base ? base + "&width=400" : "";
-
-var imgBig =
-base ? base + "&width=1200" : "";
-
-var div =
-document.createElement("div");
-
-div.className = "product";
-
-var puntos = "";
-
-var disponible = false;
-
-if(
-p.node.variants &&
-p.node.variants.edges.length > 0
-){
-
-disponible =
-p.node.variants.edges[0]
-.node.availableForSale;
-
-}
-
-if(disponible){
-
-for(var j=0; j<6; j++){
-
-puntos +=
-'<span class="dot"></span>';
-
-}
-
-}
-
-div.innerHTML =
-
-'<img loading="lazy" src="' +
-imgSmall +
-'">' +
-
-'<div class="stock-dots">' +
-puntos +
-'</div>';
-
-div.onclick = (function(img){
-
-return function(){
-
-abrir(img);
-
-}
-
-})(imgBig);
-
-contenedor.appendChild(div);
-
-cursorGlobal = p.cursor;
-
-totalCargados++;
-
-}
-
-if(
-!data.data.collection.products.pageInfo
-.hasNextPage
-){
-
-document.getElementById("btnVerMas")
-.style.display = "none";
-
-}
-
-}
-
-function abrir(img){
-
-document.getElementById("viewer")
-.style.display = "flex";
-
-document.getElementById("imagenGrande")
-.src = img;
-
-}
-
-function cerrar(){
-
-document.getElementById("viewer")
-.style.display = "none";
-
-}
-
-cargar("315186315401","22");
-
+})();
 </script>
 
 </body>
