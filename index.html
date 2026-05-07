@@ -76,9 +76,10 @@ width:23%;
 width:100%;
 height:140px;
 object-fit:cover;
+display:block;
 }
 
-/* 🔥 PUNTOS DE STOCK */
+/* PUNTOS STOCK */
 
 .stock-dots{
 display:flex;
@@ -138,6 +139,7 @@ max-height:95%;
 <h1>SELECCIONA TU TALLA</h1>
 
 <div class="menu-tallas">
+
 <button onclick="cargar('315186315401','22')">22</button>
 <button onclick="cargar('315186348169','22.5')">22.5</button>
 <button onclick="cargar('315186380937','23')">23</button>
@@ -152,13 +154,16 @@ max-height:95%;
 <button onclick="cargar('315186643081','27.5')">27.5</button>
 <button onclick="cargar('315186675849','28')">28</button>
 <button onclick="cargar('315186708617','28.5')">28.5</button>
+
 </div>
 
 <h2 id="titulo">TALLA 22</h2>
 
 <div class="grid" id="productos"></div>
 
-<button class="ver-mas" id="btnVerMas" onclick="cargarMas()">VER MÁS MODELOS 🔥</button>
+<button class="ver-mas" id="btnVerMas" onclick="cargarMas()">
+VER MÁS MODELOS 🔥
+</button>
 
 <div class="viewer" id="viewer" onclick="cerrar()">
 <img id="imagenGrande">
@@ -167,13 +172,17 @@ max-height:95%;
 <script>
 
 var domain="cb8300-4.myshopify.com";
+
 var token="7f3dd550a0b28421734c9aea7fa6b224";
 
 var cursorGlobal = null;
+
 var cargando = false;
+
 var collectionGlobal = null;
 
 var totalCargados = 0;
+
 var LIMITE = 199;
 
 var ultimoScroll = 0;
@@ -184,9 +193,13 @@ window.onscroll = function(){
 
 if(cargando) return;
 
-var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+var scrollTop =
+window.pageYOffset ||
+document.documentElement.scrollTop;
 
-var windowHeight = window.innerHeight || document.documentElement.clientHeight;
+var windowHeight =
+window.innerHeight ||
+document.documentElement.clientHeight;
 
 var docHeight = Math.max(
 document.body.scrollHeight,
@@ -198,28 +211,41 @@ document.documentElement.offsetHeight
 if(scrollTop + windowHeight >= docHeight - 200){
 
 if(scrollTop > ultimoScroll){
+
 ultimoScroll = scrollTop;
+
 cargarMas();
+
 }
 
 }
 
 };
+
 }
 
 function cargar(collectionId, talla){
 
 collectionGlobal = collectionId;
+
 cursorGlobal = null;
+
 totalCargados = 0;
+
 ultimoScroll = 0;
 
-document.getElementById("titulo").innerHTML="TALLA "+talla;
-document.getElementById("productos").innerHTML="";
-document.getElementById("btnVerMas").style.display="block";
+document.getElementById("titulo").innerHTML =
+"TALLA " + talla;
+
+document.getElementById("productos").innerHTML = "";
+
+document.getElementById("btnVerMas").style.display =
+"block";
 
 cargarMas();
+
 activarScroll();
+
 }
 
 function cargarMas(){
@@ -227,13 +253,22 @@ function cargarMas(){
 if(cargando) return;
 
 if(totalCargados >= LIMITE){
-document.getElementById("btnVerMas").style.display="none";
+
+document.getElementById("btnVerMas").style.display =
+"none";
+
 return;
+
 }
 
 cargando = true;
 
-var query = '{ collection(id:"gid://shopify/Collection/' + collectionGlobal + '") { products(first:6 ' + (cursorGlobal ? ', after:\\"'+cursorGlobal+'\\"" : '') + ') { edges{ cursor node{ images(first:1){ edges{ node{ url } } } variants(first:1){ edges{ node{ quantityAvailable } } } } } pageInfo{ hasNextPage } } } }';
+var query =
+'{ collection(id:"gid://shopify/Collection/' +
+collectionGlobal +
+'") { products(first:6' +
+(cursorGlobal ? ', after:"' + cursorGlobal + '"' : '') +
+') { edges { cursor node { images(first:1){ edges{ node{ url } } } variants(first:1){ edges{ node{ quantityAvailable } } } } } pageInfo{ hasNextPage } } } }';
 
 var xhr = new XMLHttpRequest();
 
@@ -243,7 +278,10 @@ xhr.open(
 true
 );
 
-xhr.setRequestHeader("Content-Type","application/json");
+xhr.setRequestHeader(
+"Content-Type",
+"application/json"
+);
 
 xhr.setRequestHeader(
 "X-Shopify-Storefront-Access-Token",
@@ -252,7 +290,11 @@ token
 
 xhr.onreadystatechange = function(){
 
-if(xhr.readyState === 4 && xhr.status === 200){
+if(xhr.readyState === 4){
+
+cargando = false;
+
+if(xhr.status === 200){
 
 var data = JSON.parse(xhr.responseText);
 
@@ -260,17 +302,31 @@ procesarProductos(data);
 
 }
 
+}
+
 };
 
-xhr.send(JSON.stringify({query:query}));
+xhr.send(JSON.stringify({
+query:query
+}));
 
 }
 
 function procesarProductos(data){
 
-var edges = data.data.collection.products.edges;
+if(
+!data ||
+!data.data ||
+!data.data.collection
+){
+return;
+}
 
-var contenedor = document.getElementById("productos");
+var edges =
+data.data.collection.products.edges;
+
+var contenedor =
+document.getElementById("productos");
 
 for(var i=0; i<edges.length; i++){
 
@@ -278,18 +334,25 @@ var p = edges[i];
 
 var base = "";
 
-if(p.node.images.edges.length > 0){
-base = p.node.images.edges[0].node.url;
+if(
+p.node.images.edges.length > 0
+){
+
+base =
+p.node.images.edges[0].node.url;
+
 }
 
-var imgSmall = base ? base + "&width=400" : "";
-var imgBig = base ? base + "&width=1200" : "";
+var imgSmall =
+base ? base + "&width=400" : "";
 
-var div = document.createElement("div");
+var imgBig =
+base ? base + "&width=1200" : "";
+
+var div =
+document.createElement("div");
 
 div.className = "product";
-
-/* 🔥 STOCK REAL */
 
 var puntos = "";
 
@@ -300,25 +363,33 @@ p.node.variants.edges.length > 0
 ){
 
 stockReal =
-p.node.variants.edges[0].node.quantityAvailable || 0;
+p.node.variants.edges[0]
+.node.quantityAvailable || 0;
 
 }
 
-/* límite para no trabar teléfonos viejos */
-
 if(stockReal > 15){
+
 stockReal = 15;
+
 }
 
 for(var j=0; j<stockReal; j++){
 
-puntos += '<span class="dot"></span>';
+puntos +=
+'<span class="dot"></span>';
 
 }
 
 div.innerHTML =
-'<img src="'+imgSmall+'" loading="lazy">' +
-'<div class="stock-dots">'+puntos+'</div>';
+
+'<img loading="lazy" src="' +
+imgSmall +
+'">' +
+
+'<div class="stock-dots">' +
+puntos +
+'</div>';
 
 div.onclick = (function(img){
 
@@ -338,11 +409,13 @@ totalCargados++;
 
 }
 
-cargando = false;
+if(
+!data.data.collection.products.pageInfo
+.hasNextPage
+){
 
-if(!data.data.collection.products.pageInfo.hasNextPage){
-
-document.getElementById("btnVerMas").style.display="none";
+document.getElementById("btnVerMas")
+.style.display = "none";
 
 }
 
@@ -350,15 +423,18 @@ document.getElementById("btnVerMas").style.display="none";
 
 function abrir(img){
 
-document.getElementById("viewer").style.display="flex";
+document.getElementById("viewer")
+.style.display = "flex";
 
-document.getElementById("imagenGrande").src=img;
+document.getElementById("imagenGrande")
+.src = img;
 
 }
 
 function cerrar(){
 
-document.getElementById("viewer").style.display="none";
+document.getElementById("viewer")
+.style.display = "none";
 
 }
 
