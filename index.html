@@ -87,6 +87,7 @@ flex-wrap:wrap;
 gap:2px;
 padding:4px 0 6px;
 opacity:.45;
+min-height:10px;
 }
 
 .dot{
@@ -232,7 +233,7 @@ return;
 
 cargando = true;
 
-var query = '{ collection(id:"gid://shopify/Collection/' + collectionGlobal + '") { products(first:6 ' + (cursorGlobal ? ', after:"'+cursorGlobal+'"' : '') + ') { edges{ cursor node{ images(first:1){ edges{ node{ url } } } } } pageInfo{ hasNextPage } } } }';
+var query = '{ collection(id:"gid://shopify/Collection/' + collectionGlobal + '") { products(first:6 ' + (cursorGlobal ? ', after:\\"'+cursorGlobal+'\\"" : '') + ') { edges{ cursor node{ images(first:1){ edges{ node{ url } } } variants(first:1){ edges{ node{ quantityAvailable } } } } } pageInfo{ hasNextPage } } } }';
 
 var xhr = new XMLHttpRequest();
 
@@ -288,21 +289,35 @@ var div = document.createElement("div");
 
 div.className = "product";
 
-/* 🔥 PUNTOS */
+/* 🔥 STOCK REAL */
 
 var puntos = "";
 
-/* cantidad de puntos aleatorios para prueba */
-var stockFake = Math.floor(Math.random()*12)+1;
+var stockReal = 0;
 
-for(var j=0; j<stockFake; j++){
+if(
+p.node.variants.edges.length > 0
+){
+
+stockReal =
+p.node.variants.edges[0].node.quantityAvailable || 0;
+
+}
+
+/* límite para no trabar teléfonos viejos */
+
+if(stockReal > 15){
+stockReal = 15;
+}
+
+for(var j=0; j<stockReal; j++){
 
 puntos += '<span class="dot"></span>';
 
 }
 
 div.innerHTML =
-'<img src="'+imgSmall+'">' +
+'<img src="'+imgSmall+'" loading="lazy">' +
 '<div class="stock-dots">'+puntos+'</div>';
 
 div.onclick = (function(img){
