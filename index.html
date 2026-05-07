@@ -11,7 +11,7 @@ body{
     margin:0;
     padding:10px;
     background:#f3f3f3;
-    font-family:Arial;
+    font-family:Arial,sans-serif;
 }
 
 .tallas{
@@ -49,20 +49,22 @@ body{
     width:100%;
     aspect-ratio:1/1;
     object-fit:cover;
+    display:block;
 }
 
 .puntos{
     display:flex;
     justify-content:center;
     gap:6px;
-    margin-top:8px;
+    margin-top:10px;
+    flex-wrap:wrap;
 }
 
 .punto{
     width:8px;
     height:8px;
     border-radius:50%;
-    background:#9b9b9b;
+    background:black;
 }
 </style>
 </head>
@@ -74,14 +76,15 @@ body{
 <div class="grid" id="productos"></div>
 
 <script>
+
 const SHOPIFY_DOMAIN = "TU-TIENDA.myshopify.com";
 const STOREFRONT_TOKEN = "TU_TOKEN";
 
 const tallas = [
-    "22","22.5","23","23.5",
-    "24","24.5","25","25.5",
-    "26","26.5","27","27.5",
-    "28","28.5"
+"22","22.5","23","23.5",
+"24","24.5","25","25.5",
+"26","26.5","27","27.5",
+"28","28.5"
 ];
 
 let productosGlobal = [];
@@ -89,8 +92,11 @@ let productosGlobal = [];
 const tallasContainer = document.getElementById("tallas");
 
 tallas.forEach(talla=>{
+
     const btn = document.createElement("button");
+
     btn.className = "talla-btn";
+
     btn.textContent = talla;
 
     btn.onclick = ()=>{
@@ -98,6 +104,7 @@ tallas.forEach(talla=>{
     };
 
     tallasContainer.appendChild(btn);
+
 });
 
 async function obtenerProductos(){
@@ -107,12 +114,13 @@ async function obtenerProductos(){
       products(first: 250) {
         edges {
           node {
+
             title
 
             images(first: 10){
               edges{
                 node{
-                  url
+                  originalSrc
                 }
               }
             }
@@ -125,26 +133,28 @@ async function obtenerProductos(){
                 }
               }
             }
+
           }
         }
       }
     }`;
 
     const response = await fetch(
-      `https://${SHOPIFY_DOMAIN}/api/2024-01/graphql.json`,
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-          "X-Shopify-Storefront-Access-Token":STOREFRONT_TOKEN
-        },
-        body:JSON.stringify({ query })
-      }
+        \`https://${SHOPIFY_DOMAIN}/api/2024-01/graphql.json\`,
+        {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json",
+                "X-Shopify-Storefront-Access-Token":STOREFRONT_TOKEN
+            },
+            body:JSON.stringify({query})
+        }
     );
 
     const data = await response.json();
 
     productosGlobal = data.data.products.edges.map(p=>p.node);
+
 }
 
 function cargarProductos(tallaSeleccionada){
@@ -166,25 +176,28 @@ function cargarProductos(tallaSeleccionada){
         if(stock <= 0) return;
 
         const imagen =
-            producto.images.edges[0]?.node.url ||
-            "";
-
-        const card = document.createElement("div");
-        card.className = "card";
+            producto.images.edges[0]?.node.originalSrc || "";
 
         const puntosHTML = Array(stock)
             .fill('<div class="punto"></div>')
             .join("");
 
+        const card = document.createElement("div");
+
+        card.className = "card";
+
         card.innerHTML = `
-            <img src="${imagen}">
+            <img src="${imagen}" loading="lazy">
+
             <div class="puntos">
                 ${puntosHTML}
             </div>
         `;
 
         container.appendChild(card);
+
     });
+
 }
 
 (async ()=>{
@@ -194,6 +207,7 @@ function cargarProductos(tallaSeleccionada){
     cargarProductos("22");
 
 })();
+
 </script>
 
 </body>
