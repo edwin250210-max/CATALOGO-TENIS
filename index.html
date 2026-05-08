@@ -169,7 +169,8 @@ max-height:95%;
 
 var domain="cb8300-4.myshopify.com";
 
-var token="atkn_5d57d5f9eb0646176735b06f6d37614998dd6be45ac747e560906011875c2c3b";
+/* TOKEN ORIGINAL QUE SÍ FUNCIONA */
+var token="7f3dd550a0b28421734c9aea7fa6b224";
 
 var cursorGlobal = null;
 var cargando = false;
@@ -360,10 +361,12 @@ var imgBig = base ? base + "&width=1200" : "";
 
 var variantes = p.node.variants.edges;
 
+/* SOLO DISPONIBLES */
 var stock = variantes.filter(function(v){
 return v.node.availableForSale;
 }).length;
 
+/* SI NO HAY DISPONIBLES NO SALE */
 if(stock <= 0){
 continue;
 }
