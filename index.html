@@ -352,25 +352,29 @@ var stock = 0;
 
 variantes.forEach(function(v){
 
-if(v.node.availableForSale){
+if(
+v.node.availableForSale &&
+v.node.quantityAvailable
+){
 
-var cantidad = v.node.quantityAvailable;
-
-if(cantidad && cantidad > 0){
-
-stock += cantidad;
-
-}else{
-
-stock += 1;
-
-}
+stock += v.node.quantityAvailable;
 
 }
 
 });
 
-/* máximo 12 puntos */
+/* fallback */
+if(stock <= 0){
+
+stock = variantes.filter(function(v){
+
+return v.node.availableForSale;
+
+}).length;
+
+}
+
+/* máximo visual */
 if(stock > 12){
 stock = 12;
 }
