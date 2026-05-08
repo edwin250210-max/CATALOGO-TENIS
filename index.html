@@ -86,15 +86,16 @@ background:white;
 }
 
 .stock-dots{
-line-height:10px;
-height:10px;
-overflow:hidden;
+min-height:16px;
+line-height:16px;
+padding-top:2px;
 }
 
 .stock-dot{
-font-size:10px;
-letter-spacing:-1px;
-color:#999;
+font-size:14px;
+letter-spacing:-2px;
+color:#777;
+display:inline-block;
 }
 
 .ver-mas{
@@ -358,7 +359,7 @@ var dots = "";
 
 for(var d=0; d<stock; d++){
 
-dots += '<span class="stock-dot">•</span>';
+dots += '<span class="stock-dot">●</span>';
 
 }
 
