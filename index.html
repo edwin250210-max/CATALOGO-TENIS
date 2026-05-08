@@ -271,7 +271,6 @@ variants(first:20){
 edges{
 node{
 availableForSale
-quantityAvailable
 }
 }
 }
@@ -348,17 +347,12 @@ var imgBig = base ? base + "&width=1200" : "";
 
 var variantes = p.node.variants.edges;
 
-var stock = 0;
+/* SOLO variantes disponibles */
+var stock = variantes.filter(function(v){
 
-variantes.forEach(function(v){
+return v.node.availableForSale;
 
-if(v.node.availableForSale){
-
-stock += v.node.quantityAvailable || 0;
-
-}
-
-});
+}).length;
 
 /* máximo 12 puntos */
 if(stock > 12){
