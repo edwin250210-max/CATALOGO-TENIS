@@ -76,27 +76,25 @@ width:23%;
 width:100%;
 height:140px;
 object-fit:cover;
+display:block;
 }
 
 .stock-box{
-padding:6px;
+padding:4px 0 8px 0;
 text-align:center;
-}
-
-.stock-title{
-font-size:12px;
-margin-top:2px;
+background:white;
 }
 
 .stock-dots{
-line-height:16px;
-word-break:break-word;
+line-height:10px;
+height:10px;
+overflow:hidden;
 }
 
 .stock-dot{
-font-size:16px;
-letter-spacing:1px;
-color:black;
+font-size:10px;
+letter-spacing:-1px;
+color:#999;
 }
 
 .ver-mas{
@@ -200,8 +198,11 @@ document.documentElement.offsetHeight
 if(scrollTop + windowHeight >= docHeight - 200){
 
 if(scrollTop > ultimoScroll){
+
 ultimoScroll = scrollTop;
+
 cargarMas();
+
 }
 
 }
@@ -268,7 +269,6 @@ url
 variants(first:20){
 edges{
 node{
-title
 quantityAvailable
 }
 }
@@ -346,35 +346,19 @@ var imgBig = base ? base + "&width=1200" : "";
 
 var variantes = p.node.variants.edges;
 
-var puntosHTML = "";
+var stock = 0;
 
 for(var x=0; x<variantes.length; x++){
 
-var variante = variantes[x].node;
+stock += variantes[x].node.quantityAvailable || 0;
 
-var stock = variante.quantityAvailable || 0;
+}
 
 var dots = "";
 
 for(var d=0; d<stock; d++){
 
-dots += '<span class="stock-dot">●</span>';
-
-}
-
-puntosHTML += `
-<div class="stock-box">
-
-<div class="stock-dots">
-${dots}
-</div>
-
-<div class="stock-title">
-${variante.title}
-</div>
-
-</div>
-`;
+dots += '<span class="stock-dot">•</span>';
 
 }
 
@@ -385,7 +369,11 @@ div.className = "product";
 div.innerHTML = `
 <img src="${imgSmall}">
 
-${puntosHTML}
+<div class="stock-box">
+<div class="stock-dots">
+${dots}
+</div>
+</div>
 `;
 
 div.onclick = (function(img){
