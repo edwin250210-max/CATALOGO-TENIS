@@ -42,7 +42,6 @@ body{
     background:white;
     border-radius:18px;
     overflow:hidden;
-    background:white;
 }
 
 .card img{
@@ -50,21 +49,6 @@ body{
     aspect-ratio:1/1;
     object-fit:cover;
     display:block;
-}
-
-.puntos{
-    display:flex;
-    justify-content:center;
-    gap:6px;
-    padding:10px;
-    flex-wrap:wrap;
-}
-
-.punto{
-    width:8px;
-    height:8px;
-    border-radius:50%;
-    background:black;
 }
 </style>
 </head>
@@ -129,7 +113,6 @@ const query = `
           edges{
             node{
               title
-              quantityAvailable
             }
           }
         }
@@ -170,16 +153,8 @@ productosGlobal.forEach(producto=>{
 
     if(!variante) return;
 
-    const stock = variante.node.quantityAvailable || 0;
-
-    if(stock <= 0) return;
-
     const imagen =
         producto.images.edges[0]?.node.url || "";
-
-    const puntosHTML = Array(stock)
-        .fill('<div class="punto"></div>')
-        .join("");
 
     const card = document.createElement("div");
 
@@ -187,10 +162,6 @@ productosGlobal.forEach(producto=>{
 
     card.innerHTML = `
         <img src="${imagen}" loading="lazy">
-
-        <div class="puntos">
-            ${puntosHTML}
-        </div>
     `;
 
     container.appendChild(card);
