@@ -168,8 +168,6 @@ max-height:95%;
 <script>
 
 var domain="cb8300-4.myshopify.com";
-
-/* TOKEN ORIGINAL QUE SÍ FUNCIONA */
 var token="7f3dd550a0b28421734c9aea7fa6b224";
 
 var cursorGlobal = null;
@@ -273,6 +271,7 @@ variants(first:20){
 edges{
 node{
 availableForSale
+quantityAvailable
 }
 }
 }
@@ -295,7 +294,7 @@ var xhr = new XMLHttpRequest();
 
 xhr.open(
 "POST",
-"https://" + domain + "/api/2026-04/graphql.json",
+"https://" + domain + "/api/2023-10/graphql.json",
 true
 );
 
@@ -311,21 +310,11 @@ token
 
 xhr.onreadystatechange = function(){
 
-if(xhr.readyState === 4){
-
-cargando = false;
-
-if(xhr.status === 200){
+if(xhr.readyState === 4 && xhr.status === 200){
 
 var data = JSON.parse(xhr.responseText);
 
 procesarProductos(data);
-
-}else{
-
-console.log(xhr.responseText);
-
-}
 
 }
 
@@ -336,8 +325,6 @@ xhr.send(JSON.stringify({query:query}));
 }
 
 function procesarProductos(data){
-
-if(!data.data || !data.data.collection) return;
 
 var edges = data.data.collection.products.edges;
 
@@ -361,14 +348,21 @@ var imgBig = base ? base + "&width=1200" : "";
 
 var variantes = p.node.variants.edges;
 
-/* SOLO DISPONIBLES */
-var stock = variantes.filter(function(v){
-return v.node.availableForSale;
-}).length;
+var stock = 0;
 
-/* SI NO HAY DISPONIBLES NO SALE */
-if(stock <= 0){
-continue;
+variantes.forEach(function(v){
+
+if(v.node.availableForSale){
+
+stock += v.node.quantityAvailable || 0;
+
+}
+
+});
+
+/* máximo 12 puntos */
+if(stock > 12){
+stock = 12;
 }
 
 var dots = "";
@@ -410,6 +404,8 @@ cursorGlobal = p.cursor;
 totalCargados++;
 
 }
+
+cargando = false;
 
 if(!data.data.collection.products.pageInfo.hasNextPage){
 
