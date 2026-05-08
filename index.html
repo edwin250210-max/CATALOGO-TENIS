@@ -270,7 +270,7 @@ url
 variants(first:20){
 edges{
 node{
-quantityAvailable
+availableForSale
 }
 }
 }
@@ -347,13 +347,7 @@ var imgBig = base ? base + "&width=1200" : "";
 
 var variantes = p.node.variants.edges;
 
-var stock = 0;
-
-for(var x=0; x<variantes.length; x++){
-
-stock += variantes[x].node.quantityAvailable || 0;
-
-}
+var stock = variantes.length;
 
 var dots = "";
 
