@@ -78,6 +78,27 @@ height:140px;
 object-fit:cover;
 }
 
+.stock-box{
+padding:6px;
+text-align:center;
+}
+
+.stock-title{
+font-size:12px;
+margin-top:2px;
+}
+
+.stock-dots{
+line-height:16px;
+word-break:break-word;
+}
+
+.stock-dot{
+font-size:16px;
+letter-spacing:1px;
+color:black;
+}
+
 .ver-mas{
 position:fixed;
 bottom:10px;
@@ -155,7 +176,7 @@ var cargando = false;
 var collectionGlobal = null;
 
 var totalCargados = 0;
-var LIMITE = 199; // 🔥 AQUÍ EL CAMBIO
+var LIMITE = 199;
 
 var ultimoScroll = 0;
 
@@ -191,50 +212,120 @@ cargarMas();
 function cargar(collectionId, talla){
 
 collectionGlobal = collectionId;
+
 cursorGlobal = null;
+
 totalCargados = 0;
+
 ultimoScroll = 0;
 
-document.getElementById("titulo").innerHTML="TALLA "+talla;
-document.getElementById("productos").innerHTML="";
-document.getElementById("btnVerMas").style.display="block";
+document.getElementById("titulo").innerHTML = "TALLA " + talla;
+
+document.getElementById("productos").innerHTML = "";
+
+document.getElementById("btnVerMas").style.display = "block";
 
 cargarMas();
+
 activarScroll();
+
 }
 
 function cargarMas(){
 
 if(cargando) return;
+
 if(totalCargados >= LIMITE){
-document.getElementById("btnVerMas").style.display="none";
+
+document.getElementById("btnVerMas").style.display = "none";
+
 return;
+
 }
 
 cargando = true;
 
-var query = '{ collection(id:"gid://shopify/Collection/' + collectionGlobal + '") { products(first:6 ' + (cursorGlobal ? ', after:"'+cursorGlobal+'"' : '') + ') { edges{ cursor node{ images(first:1){ edges{ node{ url } } } } } pageInfo{ hasNextPage } } } }';
+var query = `
+{
+collection(id:"gid://shopify/Collection/${collectionGlobal}") {
+
+products(first:6 ${cursorGlobal ? ', after:"'+cursorGlobal+'"' : ''}) {
+
+edges{
+
+cursor
+
+node{
+
+images(first:1){
+edges{
+node{
+url
+}
+}
+}
+
+variants(first:20){
+edges{
+node{
+title
+quantityAvailable
+}
+}
+}
+
+}
+
+}
+
+pageInfo{
+hasNextPage
+}
+
+}
+
+}
+}
+`;
 
 var xhr = new XMLHttpRequest();
-xhr.open("POST","https://" + domain + "/api/2023-10/graphql.json",true);
-xhr.setRequestHeader("Content-Type","application/json");
-xhr.setRequestHeader("X-Shopify-Storefront-Access-Token",token);
+
+xhr.open(
+"POST",
+"https://" + domain + "/api/2023-10/graphql.json",
+true
+);
+
+xhr.setRequestHeader(
+"Content-Type",
+"application/json"
+);
+
+xhr.setRequestHeader(
+"X-Shopify-Storefront-Access-Token",
+token
+);
 
 xhr.onreadystatechange = function(){
+
 if(xhr.readyState === 4 && xhr.status === 200){
 
 var data = JSON.parse(xhr.responseText);
+
 procesarProductos(data);
 
 }
+
 };
 
 xhr.send(JSON.stringify({query:query}));
+
 }
 
 function procesarProductos(data){
 
 var edges = data.data.collection.products.edges;
+
 var contenedor = document.getElementById("productos");
 
 for(var i=0; i<edges.length; i++){
@@ -242,25 +333,75 @@ for(var i=0; i<edges.length; i++){
 var p = edges[i];
 
 var base = "";
+
 if(p.node.images.edges.length > 0){
+
 base = p.node.images.edges[0].node.url;
+
 }
 
 var imgSmall = base ? base + "&width=400" : "";
+
 var imgBig = base ? base + "&width=1200" : "";
 
+var variantes = p.node.variants.edges;
+
+var puntosHTML = "";
+
+for(var x=0; x<variantes.length; x++){
+
+var variante = variantes[x].node;
+
+var stock = variante.quantityAvailable || 0;
+
+var dots = "";
+
+for(var d=0; d<stock; d++){
+
+dots += '<span class="stock-dot">●</span>';
+
+}
+
+puntosHTML += `
+<div class="stock-box">
+
+<div class="stock-dots">
+${dots}
+</div>
+
+<div class="stock-title">
+${variante.title}
+</div>
+
+</div>
+`;
+
+}
+
 var div = document.createElement("div");
+
 div.className = "product";
 
-div.innerHTML = '<img src="'+imgSmall+'"><p style="text-align:center;font-size:14px;">Disponible</p>';
+div.innerHTML = `
+<img src="${imgSmall}">
+
+${puntosHTML}
+`;
 
 div.onclick = (function(img){
-return function(){ abrir(img); }
+
+return function(){
+
+abrir(img);
+
+}
+
 })(imgBig);
 
 contenedor.appendChild(div);
 
 cursorGlobal = p.cursor;
+
 totalCargados++;
 
 }
@@ -268,18 +409,25 @@ totalCargados++;
 cargando = false;
 
 if(!data.data.collection.products.pageInfo.hasNextPage){
-document.getElementById("btnVerMas").style.display="none";
+
+document.getElementById("btnVerMas").style.display = "none";
+
 }
 
 }
 
 function abrir(img){
-document.getElementById("viewer").style.display="flex";
-document.getElementById("imagenGrande").src=img;
+
+document.getElementById("viewer").style.display = "flex";
+
+document.getElementById("imagenGrande").src = img;
+
 }
 
 function cerrar(){
-document.getElementById("viewer").style.display="none";
+
+document.getElementById("viewer").style.display = "none";
+
 }
 
 cargar("315186315401","22");
