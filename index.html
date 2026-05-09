@@ -77,6 +77,7 @@ width:100%;
 height:140px;
 object-fit:cover;
 display:block;
+background:#fff;
 }
 
 .stock-box{
@@ -337,15 +338,18 @@ var p = edges[i];
 
 var base = "";
 
-if(p.node.images.edges.length > 0){
+if(
+p.node.images.edges.length > 0 &&
+p.node.images.edges[0].node.url
+){
 
 base = p.node.images.edges[0].node.url;
 
 }
 
-var imgSmall = base ? base + "&width=400" : "";
+var imgSmall = base || "";
 
-var imgBig = base ? base + "&width=1200" : "";
+var imgBig = base || "";
 
 var variantes = p.node.variants.edges;
 
@@ -392,7 +396,7 @@ var div = document.createElement("div");
 div.className = "product";
 
 div.innerHTML = `
-<img src="${imgSmall}">
+<img src="${imgSmall}" loading="lazy">
 
 <div class="stock-box">
 <div class="stock-dots">
