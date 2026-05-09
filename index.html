@@ -209,6 +209,7 @@ cargarMas();
 }
 
 };
+
 }
 
 function cargar(collectionId, talla){
@@ -348,30 +349,29 @@ var imgBig = base ? base + "&width=1200" : "";
 
 var variantes = p.node.variants.edges;
 
+/* INVENTARIO REAL */
 var stock = 0;
 
-variantes.forEach(function(v){
+for(var x=0; x<variantes.length; x++){
+
+var v = variantes[x].node;
 
 if(
-v.node.availableForSale &&
-v.node.quantityAvailable
+v.availableForSale &&
+v.quantityAvailable > 0
 ){
 
-stock += v.node.quantityAvailable;
+stock = v.quantityAvailable;
+
+break;
 
 }
 
-});
+}
 
-/* fallback */
+/* ocultar agotados */
 if(stock <= 0){
-
-stock = variantes.filter(function(v){
-
-return v.node.availableForSale;
-
-}).length;
-
+continue;
 }
 
 /* máximo visual */
