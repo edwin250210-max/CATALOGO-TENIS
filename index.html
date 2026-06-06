@@ -155,7 +155,7 @@ var cargando = false;
 var collectionGlobal = null;
 
 var totalCargados = 0;
-var LIMITE = 199; // 🔥 AQUÍ EL CAMBIO
+var LIMITE = 199;
 
 var ultimoScroll = 0;
 
@@ -213,7 +213,7 @@ return;
 
 cargando = true;
 
-var query = '{ collection(id:"gid://shopify/Collection/' + collectionGlobal + '") { products(first:6 ' + (cursorGlobal ? ', after:"'+cursorGlobal+'"' : '') + ') { edges{ cursor node{ images(first:1){ edges{ node{ url } } } } } pageInfo{ hasNextPage } } } }';
+var query = '{ collection(id:"gid://shopify/Collection/' + collectionGlobal + '") { products(first:6 ' + (cursorGlobal ? ', after:"'+cursorGlobal+'"' : '') + ') { edges{ cursor node{ availableForSale images(first:1){ edges{ node{ url } } } } } pageInfo{ hasNextPage } } } }';
 
 var xhr = new XMLHttpRequest();
 xhr.open("POST","https://" + domain + "/api/2023-10/graphql.json",true);
@@ -240,6 +240,12 @@ var contenedor = document.getElementById("productos");
 for(var i=0; i<edges.length; i++){
 
 var p = edges[i];
+
+// 🔥 Saltar productos sin stock
+if(!p.node.availableForSale){
+cursorGlobal = p.cursor;
+continue;
+}
 
 var base = "";
 if(p.node.images.edges.length > 0){
