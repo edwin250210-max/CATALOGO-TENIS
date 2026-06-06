@@ -3,117 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>TENIS NATALIA</title>
-
 <style>
-
-body{
-font-family:Arial;
-background:#f4f4f4;
-margin:0;
-padding:0;
-}
-
-h1{
-text-align:center;
-font-size:40px;
-margin-top:20px;
-}
-
-h2{
-text-align:center;
-font-size:30px;
-margin:15px;
-}
-
-.menu-tallas{
-text-align:center;
-padding:10px;
-background:#f4f4f4;
-position:sticky;
-top:0;
-z-index:1000;
-}
-
-.menu-tallas button{
-padding:10px 15px;
-margin:5px;
-background:black;
-color:white;
-border:none;
-font-size:16px;
-border-radius:10px;
-}
-
-.grid{
-display:flex;
-flex-wrap:wrap;
-padding:10px;
-}
-
-.product{
-width:48%;
-margin:1%;
-background:white;
-border-radius:10px;
-overflow:hidden;
-}
-
-@media screen and (min-width:400px){
-.product{
-width:31%;
-}
-}
-
-@media screen and (min-width:500px){
-.product{
-width:23%;
-}
-}
-
-.product img{
-width:100%;
-height:140px;
-object-fit:cover;
-}
-
-.ver-mas{
-position:fixed;
-bottom:10px;
-left:50%;
-transform:translateX(-50%);
-width:90%;
-padding:18px;
-font-size:22px;
-font-weight:bold;
-background:black;
-color:white;
-border:none;
-border-radius:12px;
-z-index:999;
-}
-
-.viewer{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:black;
-display:none;
-align-items:center;
-justify-content:center;
-}
-
-.viewer img{
-max-width:95%;
-max-height:95%;
-}
-
+body{font-family:Arial;background:#f4f4f4;margin:0;padding:0;}
+h1{text-align:center;font-size:40px;margin-top:20px;}
+h2{text-align:center;font-size:30px;margin:15px;}
+.menu-tallas{text-align:center;padding:10px;background:#f4f4f4;position:sticky;top:0;z-index:1000;}
+.menu-tallas button{padding:10px 15px;margin:5px;background:black;color:white;border:none;font-size:16px;border-radius:10px;}
+.grid{display:flex;flex-wrap:wrap;padding:10px;}
+.product{width:48%;margin:1%;background:white;border-radius:10px;overflow:hidden;}
+@media screen and (min-width:400px){.product{width:31%;}}
+@media screen and (min-width:500px){.product{width:23%;}}
+.product img{width:100%;height:140px;object-fit:cover;}
+.ver-mas{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);width:90%;padding:18px;font-size:22px;font-weight:bold;background:black;color:white;border:none;border-radius:12px;z-index:999;}
+.viewer{position:fixed;top:0;left:0;width:100%;height:100%;background:black;display:none;align-items:center;justify-content:center;}
+.viewer img{max-width:95%;max-height:95%;}
 </style>
 </head>
-
 <body>
 
 <h1>SELECCIONA TU TALLA</h1>
@@ -136,161 +42,141 @@ max-height:95%;
 </div>
 
 <h2 id="titulo">TALLA 22</h2>
-
 <div class="grid" id="productos"></div>
-
 <button class="ver-mas" id="btnVerMas" onclick="cargarMas()">VER MÁS MODELOS 🔥</button>
-
 <div class="viewer" id="viewer" onclick="cerrar()">
 <img id="imagenGrande">
 </div>
 
 <script>
 
-var domain="cb8300-4.myshopify.com";
-var token="7f3dd550a0b28421734c9aea7fa6b224";
+var domain = "cb8300-4.myshopify.com";
+var token = "7f3dd550a0b28421734c9aea7fa6b224";
 
 var cursorGlobal = null;
 var cargando = false;
 var collectionGlobal = null;
+var tallaGlobal = null;
 
 var totalCargados = 0;
 var LIMITE = 199;
-
 var ultimoScroll = 0;
 
 function activarScroll(){
-
-window.onscroll = function(){
-
-if(cargando) return;
-
-var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-var windowHeight = window.innerHeight || document.documentElement.clientHeight;
-
-var docHeight = Math.max(
-document.body.scrollHeight,
-document.documentElement.scrollHeight,
-document.body.offsetHeight,
-document.documentElement.offsetHeight
-);
-
-if(scrollTop + windowHeight >= docHeight - 200){
-
-if(scrollTop > ultimoScroll){
-ultimoScroll = scrollTop;
-cargarMas();
-}
-
-}
-
-};
+  window.onscroll = function(){
+    if(cargando) return;
+    var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    var windowHeight = window.innerHeight || document.documentElement.clientHeight;
+    var docHeight = Math.max(
+      document.body.scrollHeight, document.documentElement.scrollHeight,
+      document.body.offsetHeight, document.documentElement.offsetHeight
+    );
+    if(scrollTop + windowHeight >= docHeight - 200){
+      if(scrollTop > ultimoScroll){
+        ultimoScroll = scrollTop;
+        cargarMas();
+      }
+    }
+  };
 }
 
 function cargar(collectionId, talla){
-
-collectionGlobal = collectionId;
-cursorGlobal = null;
-totalCargados = 0;
-ultimoScroll = 0;
-
-document.getElementById("titulo").innerHTML="TALLA "+talla;
-document.getElementById("productos").innerHTML="";
-document.getElementById("btnVerMas").style.display="block";
-
-cargarMas();
-activarScroll();
+  collectionGlobal = collectionId;
+  tallaGlobal = talla;
+  cursorGlobal = null;
+  totalCargados = 0;
+  ultimoScroll = 0;
+  document.getElementById("titulo").innerHTML = "TALLA " + talla;
+  document.getElementById("productos").innerHTML = "";
+  document.getElementById("btnVerMas").style.display = "block";
+  cargarMas();
+  activarScroll();
 }
 
 function cargarMas(){
+  if(cargando) return;
+  if(totalCargados >= LIMITE){
+    document.getElementById("btnVerMas").style.display = "none";
+    return;
+  }
+  cargando = true;
 
-if(cargando) return;
-if(totalCargados >= LIMITE){
-document.getElementById("btnVerMas").style.display="none";
-return;
-}
+  // 🔥 Pedimos variantes para verificar stock por talla específica
+  var query = '{ collection(id:"gid://shopify/Collection/' + collectionGlobal + '") { products(first:6' + (cursorGlobal ? ', after:"' + cursorGlobal + '"' : '') + ') { edges { cursor node { images(first:1){ edges{ node{ url } } } variants(first:20){ edges{ node{ title availableForSale } } } } } pageInfo{ hasNextPage } } } }';
 
-cargando = true;
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "https://" + domain + "/api/2023-10/graphql.json", true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.setRequestHeader("X-Shopify-Storefront-Access-Token", token);
 
-var query = '{ collection(id:"gid://shopify/Collection/' + collectionGlobal + '") { products(first:6 ' + (cursorGlobal ? ', after:"'+cursorGlobal+'"' : '') + ') { edges{ cursor node{ availableForSale images(first:1){ edges{ node{ url } } } } } pageInfo{ hasNextPage } } } }';
+  xhr.onreadystatechange = function(){
+    if(xhr.readyState === 4 && xhr.status === 200){
+      var data = JSON.parse(xhr.responseText);
+      procesarProductos(data);
+    }
+  };
 
-var xhr = new XMLHttpRequest();
-xhr.open("POST","https://" + domain + "/api/2023-10/graphql.json",true);
-xhr.setRequestHeader("Content-Type","application/json");
-xhr.setRequestHeader("X-Shopify-Storefront-Access-Token",token);
-
-xhr.onreadystatechange = function(){
-if(xhr.readyState === 4 && xhr.status === 200){
-
-var data = JSON.parse(xhr.responseText);
-procesarProductos(data);
-
-}
-};
-
-xhr.send(JSON.stringify({query:query}));
+  xhr.send(JSON.stringify({query: query}));
 }
 
 function procesarProductos(data){
+  var edges = data.data.collection.products.edges;
+  var contenedor = document.getElementById("productos");
 
-var edges = data.data.collection.products.edges;
-var contenedor = document.getElementById("productos");
+  for(var i = 0; i < edges.length; i++){
+    var p = edges[i];
+    cursorGlobal = p.cursor;
 
-for(var i=0; i<edges.length; i++){
+    // 🔥 Buscar la variante que coincide con la talla seleccionada
+    var variantes = p.node.variants.edges;
+    var tallaDisponible = false;
 
-var p = edges[i];
+    for(var v = 0; v < variantes.length; v++){
+      var varTitle = variantes[v].node.title.trim();
+      if(varTitle === tallaGlobal && variantes[v].node.availableForSale){
+        tallaDisponible = true;
+        break;
+      }
+    }
 
-// 🔥 Saltar productos sin stock
-if(!p.node.availableForSale){
-cursorGlobal = p.cursor;
-continue;
-}
+    // 🔥 Si la talla no está disponible, saltar este producto
+    if(!tallaDisponible) continue;
 
-var base = "";
-if(p.node.images.edges.length > 0){
-base = p.node.images.edges[0].node.url;
-}
+    var base = "";
+    if(p.node.images.edges.length > 0){
+      base = p.node.images.edges[0].node.url;
+    }
 
-var imgSmall = base ? base + "&width=400" : "";
-var imgBig = base ? base + "&width=1200" : "";
+    var imgSmall = base ? base + "&width=400" : "";
+    var imgBig = base ? base + "&width=1200" : "";
 
-var div = document.createElement("div");
-div.className = "product";
+    var div = document.createElement("div");
+    div.className = "product";
+    div.innerHTML = '<img src="' + imgSmall + '"><p style="text-align:center;font-size:14px;">Disponible</p>';
+    div.onclick = (function(img){ return function(){ abrir(img); } })(imgBig);
+    contenedor.appendChild(div);
 
-div.innerHTML = '<img src="'+imgSmall+'"><p style="text-align:center;font-size:14px;">Disponible</p>';
+    totalCargados++;
+  }
 
-div.onclick = (function(img){
-return function(){ abrir(img); }
-})(imgBig);
+  cargando = false;
 
-contenedor.appendChild(div);
-
-cursorGlobal = p.cursor;
-totalCargados++;
-
-}
-
-cargando = false;
-
-if(!data.data.collection.products.pageInfo.hasNextPage){
-document.getElementById("btnVerMas").style.display="none";
-}
-
+  if(!data.data.collection.products.pageInfo.hasNextPage){
+    document.getElementById("btnVerMas").style.display = "none";
+  }
 }
 
 function abrir(img){
-document.getElementById("viewer").style.display="flex";
-document.getElementById("imagenGrande").src=img;
+  document.getElementById("viewer").style.display = "flex";
+  document.getElementById("imagenGrande").src = img;
 }
 
 function cerrar(){
-document.getElementById("viewer").style.display="none";
+  document.getElementById("viewer").style.display = "none";
 }
 
-cargar("315186315401","22");
+cargar("315186315401", "22");
 
 </script>
-
 </body>
 </html>
