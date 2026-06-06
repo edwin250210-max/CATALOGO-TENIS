@@ -76,6 +76,27 @@ width:23%;
 width:100%;
 height:140px;
 object-fit:cover;
+display:block;
+background:#fff;
+}
+
+.stock-box{
+padding:4px 0 8px 0;
+text-align:center;
+background:white;
+}
+
+.stock-dots{
+min-height:16px;
+line-height:16px;
+padding-top:2px;
+}
+
+.stock-dot{
+font-size:14px;
+letter-spacing:-2px;
+color:#777;
+display:inline-block;
 }
 
 .ver-mas{
@@ -155,7 +176,7 @@ var cargando = false;
 var collectionGlobal = null;
 
 var totalCargados = 0;
-var LIMITE = 199; // 🔥 AQUÍ EL CAMBIO
+var LIMITE = 199;
 
 var ultimoScroll = 0;
 
@@ -179,62 +200,136 @@ document.documentElement.offsetHeight
 if(scrollTop + windowHeight >= docHeight - 200){
 
 if(scrollTop > ultimoScroll){
+
 ultimoScroll = scrollTop;
+
 cargarMas();
+
 }
 
 }
 
 };
+
 }
 
 function cargar(collectionId, talla){
 
 collectionGlobal = collectionId;
+
 cursorGlobal = null;
+
 totalCargados = 0;
+
 ultimoScroll = 0;
 
-document.getElementById("titulo").innerHTML="TALLA "+talla;
-document.getElementById("productos").innerHTML="";
-document.getElementById("btnVerMas").style.display="block";
+document.getElementById("titulo").innerHTML = "TALLA " + talla;
+
+document.getElementById("productos").innerHTML = "";
+
+document.getElementById("btnVerMas").style.display = "block";
 
 cargarMas();
+
 activarScroll();
+
 }
 
 function cargarMas(){
 
 if(cargando) return;
+
 if(totalCargados >= LIMITE){
-document.getElementById("btnVerMas").style.display="none";
+
+document.getElementById("btnVerMas").style.display = "none";
+
 return;
+
 }
 
 cargando = true;
 
-var query = '{ collection(id:"gid://shopify/Collection/' + collectionGlobal + '") { products(first:6 ' + (cursorGlobal ? ', after:"'+cursorGlobal+'"' : '') + ') { edges{ cursor node{ images(first:1){ edges{ node{ url } } } } } pageInfo{ hasNextPage } } } }';
+var query = `
+{
+collection(id:"gid://shopify/Collection/${collectionGlobal}") {
+
+products(first:6 ${cursorGlobal ? ', after:"'+cursorGlobal+'"' : ''}) {
+
+edges{
+
+cursor
+
+node{
+
+images(first:1){
+edges{
+node{
+url
+}
+}
+}
+
+variants(first:20){
+edges{
+node{
+availableForSale
+quantityAvailable
+}
+}
+}
+
+}
+
+}
+
+pageInfo{
+hasNextPage
+}
+
+}
+
+}
+}
+`;
 
 var xhr = new XMLHttpRequest();
-xhr.open("POST","https://" + domain + "/api/2023-10/graphql.json",true);
-xhr.setRequestHeader("Content-Type","application/json");
-xhr.setRequestHeader("X-Shopify-Storefront-Access-Token",token);
+
+xhr.open(
+"POST",
+"https://" + domain + "/api/2023-10/graphql.json",
+true
+);
+
+xhr.setRequestHeader(
+"Content-Type",
+"application/json"
+);
+
+xhr.setRequestHeader(
+"X-Shopify-Storefront-Access-Token",
+token
+);
 
 xhr.onreadystatechange = function(){
+
 if(xhr.readyState === 4 && xhr.status === 200){
 
 var data = JSON.parse(xhr.responseText);
+
 procesarProductos(data);
 
 }
+
 };
 
 xhr.send(JSON.stringify({query:query}));
+
 }
 
 function procesarProductos(data){
 
 var edges = data.data.collection.products.edges;
+
 var contenedor = document.getElementById("productos");
 
 for(var i=0; i<edges.length; i++){
@@ -242,25 +337,88 @@ for(var i=0; i<edges.length; i++){
 var p = edges[i];
 
 var base = "";
-if(p.node.images.edges.length > 0){
+
+if(
+p.node.images.edges.length > 0 &&
+p.node.images.edges[0].node.url
+){
+
 base = p.node.images.edges[0].node.url;
+
 }
 
-var imgSmall = base ? base + "&width=400" : "";
-var imgBig = base ? base + "&width=1200" : "";
+var imgSmall = base || "";
+
+var imgBig = base || "";
+
+var variantes = p.node.variants.edges;
+
+/* INVENTARIO REAL */
+var stock = 0;
+
+for(var x=0; x<variantes.length; x++){
+
+var v = variantes[x].node;
+
+if(
+v.availableForSale &&
+v.quantityAvailable > 0
+){
+
+stock = v.quantityAvailable;
+
+break;
+
+}
+
+}
+
+/* ocultar agotados */
+if(stock <= 0){
+continue;
+}
+
+/* máximo visual */
+if(stock > 12){
+stock = 12;
+}
+
+var dots = "";
+
+for(var d=0; d<stock; d++){
+
+dots += '<span class="stock-dot">●</span>';
+
+}
 
 var div = document.createElement("div");
+
 div.className = "product";
 
-div.innerHTML = '<img src="'+imgSmall+'"><p style="text-align:center;font-size:14px;">Disponible</p>';
+div.innerHTML = `
+<img src="${imgSmall}" loading="lazy">
+
+<div class="stock-box">
+<div class="stock-dots">
+${dots}
+</div>
+</div>
+`;
 
 div.onclick = (function(img){
-return function(){ abrir(img); }
+
+return function(){
+
+abrir(img);
+
+}
+
 })(imgBig);
 
 contenedor.appendChild(div);
 
 cursorGlobal = p.cursor;
+
 totalCargados++;
 
 }
@@ -268,18 +426,25 @@ totalCargados++;
 cargando = false;
 
 if(!data.data.collection.products.pageInfo.hasNextPage){
-document.getElementById("btnVerMas").style.display="none";
+
+document.getElementById("btnVerMas").style.display = "none";
+
 }
 
 }
 
 function abrir(img){
-document.getElementById("viewer").style.display="flex";
-document.getElementById("imagenGrande").src=img;
+
+document.getElementById("viewer").style.display = "flex";
+
+document.getElementById("imagenGrande").src = img;
+
 }
 
 function cerrar(){
-document.getElementById("viewer").style.display="none";
+
+document.getElementById("viewer").style.display = "none";
+
 }
 
 cargar("315186315401","22");
