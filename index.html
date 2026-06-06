@@ -77,7 +77,6 @@ width:100%;
 height:140px;
 object-fit:cover;
 display:block;
-background:white;
 }
 
 .stock-box{
@@ -264,7 +263,7 @@ node{
 images(first:1){
 edges{
 node{
-originalSrc
+url
 }
 }
 }
@@ -338,21 +337,19 @@ var p = edges[i];
 
 var base = "";
 
-if(
-p.node.images.edges.length > 0 &&
-p.node.images.edges[0].node.originalSrc
-){
+if(p.node.images.edges.length > 0){
 
-base = p.node.images.edges[0].node.originalSrc;
+base = p.node.images.edges[0].node.url;
 
 }
 
-var imgSmall = base;
+var imgSmall = base ? base + "&width=400" : "";
 
-var imgBig = base;
+var imgBig = base ? base + "&width=1200" : "";
 
 var variantes = p.node.variants.edges;
 
+/* INVENTARIO REAL */
 var stock = 0;
 
 for(var x=0; x<variantes.length; x++){
@@ -372,10 +369,12 @@ break;
 
 }
 
+/* ocultar agotados */
 if(stock <= 0){
 continue;
 }
 
+/* máximo visual */
 if(stock > 12){
 stock = 12;
 }
@@ -393,7 +392,7 @@ var div = document.createElement("div");
 div.className = "product";
 
 div.innerHTML = `
-<img src="${imgSmall}" loading="lazy">
+<img src="${imgSmall}">
 
 <div class="stock-box">
 <div class="stock-dots">
